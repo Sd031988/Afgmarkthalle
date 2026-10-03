@@ -1,0 +1,2063 @@
+<!doctype html>
+<html lang="fa-AF" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Markthalle</title>
+<meta name="description" content="Markthalle – marketplace for home businesses in Afghanistan and abroad / بازار برای کسب‌وکارهای خانگی">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky header with search and delivery country, filter bar, dense product grid; detail, sell, cart and checkout open as side sheets */
+:root {
+  --bg: #f2f4f6;
+  --surface: #ffffff;
+  --sunk: #e8ecef;
+  --ink: #15202a;
+  --muted: #5a6977;
+  --line: #d9e0e6;
+  --accent: #0e6672;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcecee;
+  --bid: #a8500d;
+  --bid-soft: #f6e6d8;
+  --b2b: #3f4fa3;
+  --b2b-soft: #e3e6f6;
+  --ok: #1f7436;
+  --warn: #b3261e;
+  --warn-soft: #fbe6e3;
+  --ph-l: 86%;
+  --ph-t: 32%;
+  --shadow: 0 10px 40px rgba(15, 30, 40, .18);
+  --f-display: "Bricolage Grotesque", "Noto Sans Arabic", "Avenir Next", system-ui, sans-serif;
+  --f-body: "Figtree", "Noto Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141a; --surface: #161f28; --sunk: #1d2832; --ink: #e5ecf1; --muted: #94a4b2; --line: #273440;
+    --accent: #52b6c2; --accent-ink: #061317; --accent-soft: #173a40; --bid: #f0a25a; --bid-soft: #3a2817;
+    --b2b: #9ea9f0; --b2b-soft: #252c55; --ok: #6fca86; --warn: #f3887c; --warn-soft: #3d1f1c;
+    --ph-l: 24%; --ph-t: 74%; --shadow: 0 10px 40px rgba(0,0,0,.5); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141a; --surface: #161f28; --sunk: #1d2832; --ink: #e5ecf1; --muted: #94a4b2; --line: #273440;
+  --accent: #52b6c2; --accent-ink: #061317; --accent-soft: #173a40; --bid: #f0a25a; --bid-soft: #3a2817;
+  --b2b: #9ea9f0; --b2b-soft: #252c55; --ok: #6fca86; --warn: #f3887c; --warn-soft: #3d1f1c;
+  --ph-l: 24%; --ph-t: 74%; --shadow: 0 10px 40px rgba(0,0,0,.5); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+img { max-width: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+.proto { background: var(--sunk); color: var(--muted); font-size: 13px; padding: 6px 16px; text-align: center; }
+.proto b { color: var(--ink); font-weight: 600; }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1240px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 10px 12px; align-items: center; flex-wrap: wrap; }
+.logo { font-family: var(--f-display); font-weight: 700; font-size: 24px; letter-spacing: -.02em; background: none; border: 0; padding: 0; cursor: pointer; }
+.logo i { font-style: normal; color: var(--accent); }
+.search { flex: 1 1 300px; display: flex; min-width: 0; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
+.search:focus-within { border-color: var(--accent); }
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 10px 12px; outline: none; }
+.search select { border: 0; border-left: 1px solid var(--line); background: transparent; padding: 0 10px; max-width: 42%; }
+.shipto { display: flex; flex-direction: column; font-size: 11px; color: var(--muted); line-height: 1.2; }
+.shipto select { border: 0; background: transparent; font-weight: 600; font-size: 14px; padding: 0; color: var(--ink); cursor: pointer; }
+.top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-width: 0; }
+.btn { border: 1.5px solid var(--line); background: var(--surface); padding: 9px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; white-space: nowrap; display: inline-flex; gap: 8px; align-items: center; justify-content: center; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.bid { background: var(--bid); border-color: var(--bid); color: var(--surface); }
+.btn.b2b { background: var(--b2b); border-color: var(--b2b); color: var(--surface); }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.sm { padding: 5px 10px; font-size: 13px; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn.danger { color: var(--warn); }
+.count { background: var(--accent); color: var(--accent-ink); border-radius: 99px; font-size: 12px; min-width: 20px; height: 20px; padding: 0 6px; display: inline-grid; place-items: center; font-family: var(--f-mono); }
+
+nav.cats { max-width: 1240px; margin: 0 auto; padding: 0 16px 10px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.chip { border: 1px solid var(--line); background: transparent; border-radius: 99px; padding: 5px 12px; cursor: pointer; white-space: nowrap; font-size: 14px; color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+main { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 16px; }
+.bar h1 { font-family: var(--f-display); font-size: 26px; margin: 0; letter-spacing: -.02em; text-wrap: balance; }
+.bar .sub { color: var(--muted); font-size: 14px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+select.sel { border: 1.5px solid var(--line); border-radius: 10px; padding: 7px 10px; background: var(--surface); font-size: 14px; }
+.check { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font-size: 14px; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.seg button[disabled] { opacity: .45; cursor: not-allowed; }
+.hiddeninfo { font-size: 13px; color: var(--muted); margin: -6px 0 14px; }
+.linkbtn { border: 0; background: none; padding: 0; color: var(--accent); cursor: pointer; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,30,40,.10); }
+.card.nodeliver { opacity: .62; }
+.card .thumb { aspect-ratio: 4 / 3; }
+.card-b { padding: 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.card h3 { font-size: 15px; font-weight: 600; margin: 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card h3 button { all: unset; cursor: pointer; }
+.card h3 button::after { content: ""; position: absolute; inset: 0; }
+.card h3 button:focus-visible::after { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 12px; }
+.price { font-family: var(--f-mono); font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; }
+.price small { font-family: var(--f-body); font-weight: 500; font-size: 13px; color: var(--muted); }
+.meta { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: auto; align-items: center; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.tag.auc { background: var(--bid-soft); color: var(--bid); }
+.tag.fix { background: var(--accent-soft); color: var(--accent); }
+.tag.whs { background: var(--b2b-soft); color: var(--b2b); }
+.tag.ex { background: var(--sunk); color: var(--muted); }
+.tag.sold { background: var(--ink); color: var(--bg); }
+.who { font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink); }
+.who.pro { border-color: var(--b2b); color: var(--b2b); }
+.cc { font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+.shipnote { font-size: 13px; color: var(--muted); }
+.shipnote.no { color: var(--warn); }
+.left { font-family: var(--f-mono); font-size: 13px; color: var(--bid); font-variant-numeric: tabular-nums; }
+.left.soon { color: var(--warn); font-weight: 600; }
+.left.over { color: var(--muted); }
+.thumb { position: relative; background: var(--sunk); overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph { width: 100%; height: 100%; display: grid; place-items: center; background: hsl(var(--h) 38% var(--ph-l)); color: hsl(var(--h) 42% var(--ph-t)); font-family: var(--f-display); font-weight: 700; font-size: 34px; letter-spacing: -.03em; text-align: center; }
+.ph small { display: block; font-family: var(--f-body); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.thumb .tags { position: absolute; top: 8px; inset-inline-start: 8px; inset-inline-end: 48px; display: flex; gap: 4px; flex-wrap: wrap; }
+.watch { position: absolute; top: 6px; inset-inline-end: 6px; z-index: 2; width: 36px; height: 36px; border-radius: 99px; border: 0; background: var(--surface); color: var(--muted); display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 4px rgba(15,30,40,.18); }
+.watch svg, .btn .heart { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+.watch[aria-pressed="true"] { color: var(--warn); }
+.watch[aria-pressed="true"] svg, .btn[aria-pressed="true"] .heart { fill: var(--warn); stroke: var(--warn); }
+.watch:hover { color: var(--warn); }
+
+.empty { text-align: center; padding: 56px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; }
+.empty b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
+
+/* Sheets */
+.scrim { position: fixed; inset: 0; background: rgba(8, 14, 20, .45); z-index: 40; }
+.sheet { position: fixed; top: 0; inset-inline-end: 0; bottom: 0; width: min(580px, 100%); background: var(--surface); z-index: 50; display: flex; flex-direction: column; box-shadow: var(--shadow); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.sheet-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.sheet-h h2 { font-family: var(--f-display); font-size: 20px; margin: 0; letter-spacing: -.01em; }
+.sheet-b { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+.sheet-f { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; gap: 10px; flex-wrap: wrap; }
+.sheet-f .btn { flex: 1; }
+.x { border: 0; background: transparent; font-size: 26px; line-height: 1; cursor: pointer; color: var(--muted); padding: 4px 8px; }
+@media (prefers-reduced-motion: no-preference) { .sheet:not([hidden]) { animation: slide .22s ease-out; } }
+@keyframes slide { from { opacity: .4; } }
+
+.d-thumb { aspect-ratio: 4 / 3; border-radius: 10px; }
+.d-title { font-family: var(--f-display); font-size: 24px; line-height: 1.2; margin: 0; letter-spacing: -.015em; text-wrap: balance; }
+.box { border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.box.auction { border-color: var(--bid); background: var(--bid-soft); }
+.box.whs { border-color: var(--b2b); background: var(--b2b-soft); }
+.box.warnbox { border-color: var(--warn); background: var(--warn-soft); }
+.big { font-family: var(--f-mono); font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 600; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 14px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; min-width: 0; }
+.desc { white-space: pre-wrap; margin: 0; max-width: 65ch; }
+.bidline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bidline input { flex: 1 1 120px; min-width: 0; }
+.hist { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.hist li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.hist li:last-child { border-bottom: 0; }
+.hist .me { font-weight: 600; color: var(--accent); }
+.note { font-size: 13px; color: var(--muted); }
+.status { font-weight: 600; }
+.status.ok { color: var(--ok); }
+.status.warn { color: var(--warn); }
+.buynow { border-top: 1px dashed var(--bid); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.tiers { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tiers th { text-align: start; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 4px 8px; }
+.tiers td { padding: 7px 8px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.tiers td.num { font-family: var(--f-mono); text-align: end; }
+.tiers th.num { text-align: end; }
+.tiers tr.on td { background: var(--surface); font-weight: 600; }
+.tiers tr.on td:first-child { border-inline-start: 3px solid var(--b2b); }
+.calc { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; font-size: 14px; }
+.calc .tot { font-weight: 700; font-size: 16px; }
+.shipbox { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.zones { list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--muted); }
+
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label, .flabel { font-weight: 600; font-size: 14px; }
+.field .hint { font-size: 12.5px; color: var(--muted); }
+.inp { border: 1.5px solid var(--line); border-radius: 9px; padding: 9px 11px; background: var(--bg); width: 100%; min-width: 0; }
+.inp:focus { border-color: var(--accent); outline: none; }
+.inp.bad { border-color: var(--warn); }
+.err { color: var(--warn); font-size: 13px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 460px) { .two { grid-template-columns: 1fr; } }
+.zrow { display: grid; grid-template-columns: minmax(0, 1.3fr) 1fr 1fr; gap: 8px; align-items: center; }
+.zrow .check { font-weight: 600; }
+.trow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px; display: flex; gap: 12px; align-items: center; }
+.drop .prev { width: 72px; height: 54px; border-radius: 6px; background: var(--sunk); overflow: hidden; flex: none; }
+.drop .prev img { width: 100%; height: 100%; object-fit: cover; }
+fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+legend { font-weight: 700; font-size: 14px; padding: 0 6px; }
+
+.ci { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.ci .thumb { width: 64px; height: 48px; border-radius: 6px; }
+.ci .ph { font-size: 16px; }
+.ci .ph small { display: none; }
+.ci-t { min-width: 0; font-weight: 600; font-size: 14px; }
+.ci-t span { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.ci-t .bad { color: var(--warn); font-weight: 600; }
+.sum { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+.sum .tot { font-weight: 700; font-size: 17px; padding-top: 6px; border-top: 1px solid var(--line); }
+
+/* Account */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; }
+.tabs button { border: 0; background: transparent; padding: 10px 14px; cursor: pointer; color: var(--muted); font-weight: 600; border-bottom: 2.5px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: 80px 1fr auto; gap: 14px; align-items: center; }
+.li.plain { grid-template-columns: 1fr auto; }
+.li .thumb { width: 80px; height: 60px; border-radius: 8px; }
+.li .ph { font-size: 18px; }
+.li .ph small { display: none; }
+.li-b { min-width: 0; }
+.li-b h4 { margin: 0 0 2px; font-size: 15px; }
+.li-b h4 button { all: unset; cursor: pointer; }
+.li-b h4 button:hover { text-decoration: underline; }
+.li-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+@media (max-width: 560px) { .li { grid-template-columns: 64px 1fr; } .li.plain { grid-template-columns: 1fr; } .li .thumb { width: 64px; height: 48px; } .li-acts { grid-column: 1 / -1; justify-content: flex-start; } }
+.profile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; max-width: 620px; }
+
+footer { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 0 40px; color: var(--muted); font-size: 13px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; z-index: 80; font-weight: 500; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
+
+@media (max-width: 640px) {
+  header.top { position: static; }
+  .top-actions { width: 100%; }
+  .top-actions .btn { flex: 1 1 auto; padding: 9px 10px; }
+  .top-actions .btn .lbl-long { display: none; }
+  .bar h1 { font-size: 22px; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .card-b { padding: 10px; }
+  .price { font-size: 16px; }
+  .card h3 { font-size: 14px; }
+  .zrow { grid-template-columns: 1fr 1fr; }
+  .zrow .check { grid-column: 1 / -1; }
+}
+
+/* ---------- v2: Afghanistan, RTL, messages ---------- */
+html[dir="rtl"] body { font-family: "Noto Sans Arabic", "Figtree", system-ui, sans-serif; line-height: 1.7; }
+html[dir="rtl"] .logo, html[dir="rtl"] .bar h1, html[dir="rtl"] .d-title, html[dir="rtl"] .sheet-h h2, html[dir="rtl"] .hero h2 { font-family: "Noto Sans Arabic", var(--f-display); letter-spacing: 0; }
+html[dir="rtl"] .lbl, html[dir="rtl"] .tag, html[dir="rtl"] .ph small { letter-spacing: 0; text-transform: none; }
+html[dir="rtl"] .seg, html[dir="rtl"] .search { direction: rtl; }
+.logo { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; text-align: start; }
+.logo small { font-family: var(--f-body); font-size: 11.5px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.pickers { display: flex; gap: 14px; align-items: center; }
+.dot { width: 9px; height: 9px; border-radius: 99px; background: var(--warn); display: inline-block; }
+.hero { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+.hero > div:first-child { flex: 1 1 360px; min-width: 0; }
+.hero h2 { font-family: var(--f-display); font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; text-wrap: balance; }
+.hero p { margin: 0; color: var(--muted); max-width: 62ch; }
+.hero-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.tips { margin: 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 8px; }
+.chat { display: flex; flex-direction: column; gap: 8px; min-height: 120px; max-height: 50vh; overflow-y: auto; padding: 4px; }
+.msg { align-self: flex-start; max-width: 85%; background: var(--sunk); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere; }
+.msg.mine { align-self: flex-end; background: var(--accent-soft); }
+.msg .note { font-size: 11.5px; }
+.msgform { display: flex; gap: 8px; width: 100%; align-items: flex-end; }
+.msgform textarea { flex: 1; min-width: 0; resize: vertical; }
+.msgform .btn { flex: 0 0 auto !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.plainlink { text-decoration: none; color: inherit; text-align: start; }
+.itemrow { gap: 6px; padding-top: 6px; margin-top: 6px; border-top: 1px dashed var(--line); }
+.tabs .count { margin-inline-start: 4px; }
+.sheet-f .btn { flex: 1 1 auto; }
+@media (max-width: 640px) {
+  .pickers { width: 100%; justify-content: space-between; }
+  .hero { padding: 16px; }
+  .hero h2 { font-size: 20px; }
+}
+
+</style>
+</head>
+<body>
+<div class="proto" data-t="proto_banner"></div>
+
+<header class="top">
+  <div class="top-in">
+    <button class="logo" id="logo" type="button"><span data-t="site_name"></span><small data-t="tagline"></small></button>
+    <form class="search" id="searchForm" role="search">
+      <input id="q" type="search" data-tp="search_ph" data-ta="search_ph" autocomplete="off">
+      <select id="catSel" data-ta="categories"></select>
+    </form>
+    <div class="pickers">
+      <label class="shipto" for="shipTo"><span data-t="ship_to"></span><select id="shipTo"></select></label>
+      <label class="shipto" for="langSel"><span data-t="language"></span><select id="langSel"></select></label>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="accBtn" type="button"><span id="accLbl"></span><span class="dot" id="accDot" hidden></span></button>
+      <button class="btn" id="cartBtn" type="button"><span data-t="cart"></span> <span class="count" id="cartCount">0</span></button>
+      <button class="btn primary" id="sellBtn" type="button" data-t="sell"></button>
+    </div>
+  </div>
+  <nav class="cats" id="cats" data-ta="categories"></nav>
+</header>
+
+<main id="main"><div class="empty"><b>…</b></div></main>
+
+<footer>
+  <span data-t="footer_text"></span>
+  <button class="linkbtn" id="safetyBtn" type="button" data-t="privacy_title"></button>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-h"><h2 id="sheetTitle"></h2><button class="x" id="sheetClose" type="button" aria-label="×">×</button></div>
+  <div class="sheet-b" id="sheetBody"></div>
+  <div class="sheet-f" id="sheetFoot" hidden></div>
+</aside>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>
+/* Markthalle – Texte in Englisch, Dari und Paschtu.
+   Hinweis: Die Dari- und Paschtu-Übersetzungen sollten von Muttersprachlerinnen geprüft werden. */
+window.MH_STRINGS = {
+  en: {
+    site_name: "Markthalle", tagline: "Sell from home – in Afghanistan and abroad",
+    proto_banner: "Trial phase. Payments do not go through Markthalle yet: buyer and seller agree on payment directly.",
+    search_ph: "Search products or shops", categories: "Categories", ship_to: "Deliver to", language: "Language",
+    login: "Log in", cart: "Cart", sell: "Sell", footer_text: "Markthalle · marketplace for home businesses, traders and wholesale",
+    my_area: "My account", all: "All", all_categories: "All categories", all_listings: "All offers", all_types: "All offer types",
+    hero_title: "Your business, from home", hero_body: "Sell handicrafts, clothing, food and more – to buyers in Afghanistan and abroad.",
+    hero_cta_sell: "Start selling", safety_title: "Selling safely",
+    cat_handicraft: "Handicrafts & embroidery", cat_clothing: "Clothing", cat_carpets: "Carpets & textiles", cat_jewelry: "Jewellery",
+    cat_food: "Food & baking", cat_dryfruit: "Dried fruit & spices", cat_beauty: "Natural beauty", cat_home: "Home & kitchen",
+    cat_electronics: "Electronics", cat_books: "Books & learning", cat_other: "Other",
+    cond_new: "New", cond_like_new: "Like new", cond_good: "Good", cond_acceptable: "Acceptable", cond_defect: "Defective",
+    unit_piece: "piece", unit_pack: "pack", unit_box: "box", unit_dozen: "dozen", unit_kg: "kg", unit_liter: "litre", unit_meter: "metre",
+    cur_AFN: "Afghani", cur_USD: "US dollar", cur_EUR: "Euro",
+    pay_cash: "Cash on handover", pay_mobile: "Mobile money", pay_hawala: "Hawala",
+    type_auction: "Auction", type_fixed: "Fixed price", type_wholesale: "Wholesale",
+    status_offen: "Open", status_versendet: "Sent", status_abgeholt: "Picked up",
+    seller_private: "Private", seller_pro: "Trader",
+    sold: "Sold", sold_out: "Sold out", ended: "Ended", from: "from", you: "You", free: "Free",
+    n_bids: "{n} bids", start_price: "Starting price", buy_now_x: "Buy now {amount}", n_in_stock: "{n} in stock", only_n_left: "Only {n} left",
+    moq_x: "Minimum order {n} {unit}", n_available: "{n} {unit} available", n_listings: "{n} offers", n_days: "{n} days",
+    delivery_to_x: "Delivery to {country}", no_delivery_to: "Does not deliver to {country}", pickup_only: "Pickup only", free_shipping: "Free delivery",
+    shipping_x: "Delivery {amount}", days_x: "{d} days", approx_days: "about {d} working days (seller's estimate)",
+    customs_short: "customs may apply", customs_long: "This crosses a border: customs duties, import taxes and courier fees may apply. They are not included in the price.",
+    zone_inland: "Within {country}", zone_eu: "Other EU countries", zone_welt: "Abroad", pickup_in: "Pickup in {place}", all_delivery_options: "All delivery options",
+    left_dh: "{d} d {h} h", left_hm: "{h} h {m} min", left_ms: "{m}:{s} min",
+    listing_type: "Offer type", seller: "Seller", private_and_pro: "Private and traders", only_private: "Private only", only_pro: "Traders only",
+    origin: "Origin", home_and_abroad: "Home and abroad", only_from_x: "Only from {country}", only_abroad: "Only from abroad",
+    sort: "Sort", sort_new: "Newest first", sort_ending: "Ending soon", sort_asc: "Price: low to high", sort_desc: "Price: high to low", only_deliverable: "Deliverable only", refresh_failed: "Refresh failed:",
+    n_hidden: "{n} offers do not deliver to {country} and are hidden.", show_anyway: "Show anyway",
+    empty_title: "No offers yet", empty_body: "Markthalle has just started. Be the first to list something – as a private seller, a trader or a wholesaler.", empty_cta: "List the first item",
+    nothing_found: "Nothing found", nothing_found_body: "Try another search term, category or fewer filters.", results_for: "Results for “{q}”",
+    loading: "Loading …", load_listings_fail: "Offers could not be loaded", retry: "Try again",
+    load_fail_title: "The page could not load completely.", load_fail_body: "Please check your internet connection and reload the page.",
+    watch: "Add to watch list", unwatch: "Remove from watch list", watched: "Added to watch list", unwatched: "Removed from watch list", watch_short: "Watch", watched_short: "Watching",
+    login_needed: "Please log in to continue.", login_to_sell: "Please log in to sell.", login_to_watch: "Please log in to use the watch list.",
+    login_to_bid: "Please log in to bid.", login_to_buy: "Please log in to buy.", login_to_message: "Please log in to send a message.",
+    ship_to_set: "Delivery country: {country}",
+    tab_listings: "My offers ({n})", tab_messages: "Messages", tab_sales: "Sales", tab_orders: "Purchases ({n})", tab_bids: "Bids ({n})", tab_watch: "Watch list ({n})", tab_profile: "Profile",
+    account_private: "Private account", account_pro: "Trader account", logout: "Log out", logged_out: "Logged out", logged_in: "Logged in",
+    no_listings_title: "No offers yet", no_listings_body: "Use “Sell” to list your first item.",
+    sold_for: "Sold for {amount}", auction_won_by: "Ended, highest bid {amount} by {who}. The buyer can now complete the purchase.", ended_no_bids: "Ended without bids",
+    edit: "Edit", delete: "Delete", confirm_delete: "Really delete?", deleted: "Offer deleted", err_delete: "The offer could not be deleted. Offers with bids cannot be deleted.",
+    no_messages_title: "No messages yet", no_messages_body: "Open an offer and tap “Message seller”. Messages about your orders also appear here.",
+    conv_with_seller: "With seller {name}", conv_with_buyer: "With buyer {name}", new_badge: "New", open: "Open",
+    no_sales_title: "No sales yet", no_sales_body: "When someone buys from you, you will see the order here.",
+    sales_hint: "Write to the buyer to agree on payment and handover. Markthalle does not process payments yet.",
+    order_no: "Order {no}", buyer_x: "Buyer: {name}", seller_x: "Seller: {name}", payment_x: "Payment: {method}", deliver_to: "Deliver to:", phone: "Phone",
+    pickup: "Pickup", mark_shipped: "Mark as sent", mark_picked_up: "Mark as picked up", status_saved: "Status saved",
+    message_buyer: "Message buyer", message_seller: "Message seller",
+    no_orders_title: "No purchases yet", no_orders_body: "Items you buy appear here.",
+    no_bids_title: "No bids yet", no_bids_body: "Open an auction and place a bid.",
+    won_for: "Won for {amount}", bought: "Bought", in_cart: "In cart", add_to_cart: "Add to cart", update_cart: "Update quantity in cart",
+    not_won: "Not won", you_lead: "You are the highest bidder", outbid: "Outbid", your_bid_x: "your bid {amount}",
+    no_watch_title: "Your watch list is empty", no_watch_body: "Tap the heart on an offer to collect it here.", auction_ended: "Auction ended", remove: "Remove",
+    i_sell_as: "I sell as", seller_type_hint: "Traders can also offer wholesale with minimum quantities and price tiers. This is not verified at the moment.",
+    shop_name: "Shop name", shop_name_hint: "Shown publicly with your offers. You do not need to use your real name.",
+    country: "Country", province: "Province", city: "City",
+    save_profile: "Save profile", profile_saved: "Profile saved", err_name_short: "The name needs at least 2 characters.",
+    safety_intro: "These tips help you sell from home safely:",
+    safety_1: "Use a shop name instead of your real name.",
+    safety_2: "Do not show faces, your house or your street in photos.",
+    safety_3: "Do not write your address or phone number in the description. Talk to buyers through Markthalle messages first.",
+    safety_4: "Hand over goods in a safe, familiar place – ideally with a family member or a trusted person.",
+    safety_5: "Only share your phone number when you trust the buyer.",
+    safety_6: "With hawala or mobile money, check that the money has arrived before you send the goods.",
+    safety_note: "Markthalle only shows the province of your location publicly, never your exact address.",
+    register: "Register", email: "Email", password: "Password", password_hint: "At least 8 characters.", create_account: "Create account",
+    forgot_password: "Forgot password?", signup_name_hint: "Shown publicly. You can use a shop name instead of your real name.",
+    signup_confirm_hint: "After registering you will get an email with a confirmation link. You can log in after confirming.",
+    reset_intro: "Enter your email address. We will send you a link to set a new password.", send_link: "Send link", back_to_login: "Back to log in",
+    newpass_intro: "Set a new password now.", new_password: "New password", save_password: "Save password", reset_title: "Reset password",
+    account_created: "Account created and logged in", almost_done: "Almost done", confirm_email_title: "Please confirm your email address.",
+    confirm_email_body: "We sent an email to {email}. Tap the link in it and you will be logged in.",
+    confirm_email_spam: "No email? Check your spam folder.", email_sent: "Email sent", reset_sent: "If there is an account for {email}, we have sent you a link to reset your password.",
+    password_saved: "New password saved", email_confirmed: "Email confirmed. You are logged in.", link_invalid: "This link is invalid or has expired. Please request a new one.",
+    err_email_invalid: "Please enter a valid email address.", err_password_short: "The password needs at least 8 characters.", err_password_missing: "Please enter your password.",
+    err_credentials: "Email or password is wrong.", err_email_unconfirmed: "Please confirm your email address first using the link in the email.",
+    err_registered: "There is already an account for this email address. Please log in.", err_network: "No connection to the server. Please check your internet connection.",
+    err_unknown: "Unknown error.", err_image_size: "The photo is too large.", err_image_read: "The photo could not be read.",
+    chat_safety: "Only share your phone number or address when you trust the other person.", message: "Message", write_message: "Write a message …", send: "Send",
+    no_messages_yet: "No messages yet. Write the first one.", view_listing: "View offer",
+    winning_bid: "Winning bid", current_bid: "Current bid", status: "Status", ends_in: "Ends in",
+    you_won: "You won. Add the item to your cart to complete the purchase.", you_won_bought: "You won and bought this item.", won_by: "Won by {who}.",
+    own_auction: "This is your offer. You cannot bid on your own auctions.", bid_needs_delivery: "You can only bid if the seller delivers to your delivery country. You can change the delivery country at the top.",
+    your_bid: "Your bid ({cur})", place_bid: "Place bid", min_bid_hint: "Minimum bid {amount}. A bid is binding.",
+    buy_now: "Buy now", buy_now_hint: "Possible until the first bid comes in.", bid_history: "Bid history", no_bids_yet: "No bids yet.",
+    tier_prices_per: "Price tiers per {unit}", quantity: "Quantity", price_per: "Price per {unit}",
+    custom_offer: "Custom offer", custom_offer_hint: "Different quantity, special design or your own price? Ask the trader directly.",
+    target_price: "Your price per {unit} ({cur})", request_offer: "Ask for an offer",
+    rfq_text: "Hello, I am interested in {qty} {unit}.", rfq_text_price: "Could you do {price} per unit?",
+    payment_methods: "Payment methods", payment_hint: "You agree on payment directly with the seller.",
+    location: "Location", condition: "Condition", category: "Category", listed_on: "Listed on", description: "Description", no_description: "No description.",
+    listing_gone: "This offer no longer exists.", err_whole_number: "Please enter a whole number.",
+    err_moq_short: "The minimum order is {n} {unit}.", err_stock_short: "Only {n} {unit} available.",
+    shipping: "Delivery", total: "Total", subtotal: "Subtotal", err_amount: "Please enter an amount.",
+    bid_placed: "Bid of {amount} placed", buy_now_done: "Auction ended at the buy-now price. Complete the purchase now.",
+    err_cannot_buy: "This item cannot be bought.", cart_updated: "Quantity in cart updated", added_to_cart: "Added to cart", not_available: "No longer available",
+    cart_empty_title: "Your cart is empty", cart_empty_body: "Fixed-price and wholesale items, and auctions you win, are collected here.",
+    cart_hint: "Each seller gets a separate order.", order_from: "Order from {name}", fix_cart: "Please remove or fix the marked items.", checkout_this: "Order from this seller",
+    how_payment_works: "How payment works",
+    how_payment_body: "Markthalle does not process payments yet. After ordering, you and the seller agree on payment and handover through messages. Only pay sellers you trust, and with hawala or mobile money only after you have agreed on everything.",
+    name_for_delivery: "Name for delivery", name_for_delivery_hint: "Only the seller sees this.",
+    address_desc: "Address or meeting point", address_desc_hint: "District, street, nearby landmark – or leave empty and agree on a meeting point in messages.",
+    phone_optional: "Phone (optional)", phone_hint: "Only the seller sees this. You can also agree on everything through messages.",
+    payment_method: "Payment method", no_common_pay: "These items have no payment method in common.",
+    checkout: "Checkout", back: "Back", place_order: "Place binding order", sending: "Sending …", err_need_name_city: "Please fill in name and province or city.",
+    order_sent: "Order sent", order_number: "Order number", order_sent_body: "Your order has reached the seller.",
+    order_next: "Write to the seller to agree on payment and handover. You can find the order under “My account” → “Purchases”.", to_my_orders: "To my purchases",
+    profile_loading: "Your profile is still loading. Please try again in a moment.",
+    ends_at: "ends {date}", type_locked: "The offer type cannot be changed after listing.", wholesale_needs_pro: "Wholesale is for traders. You can switch your account under “My account” → “Profile”.",
+    ship_cost_for: "Delivery cost {zone}", ship_days_for: "Delivery time {zone}", cost: "Cost", days_placeholder: "Days, e.g. 3–5",
+    sell_safety_short: "Do not put your real name, address, phone number or faces in the offer.",
+    selling_as: "You sell as {kind} from {country} (can be changed in your profile).",
+    title: "Title", title_hint: "What is it and what is special about it?", currency: "Currency",
+    buy_now_price: "Buy-now price", duration: "Duration", price_each: "Price per piece", stock_count: "Number available",
+    unit: "Unit", stock_qty: "Quantity available", tier_prices: "Price tiers", tier_hint: "The first tier is the minimum order. Further tiers are optional, with larger quantities and lower prices.",
+    min_qty: "Minimum quantity", tier_from: "Tier {n}: from quantity", price_per_unit: "Price per unit",
+    payment_methods_hint: "Which payment methods do you accept?", delivery: "Delivery", delivery_hint: "Choose where you deliver and enter cost and delivery time. Leave the cost empty or 0 for free delivery.",
+    pickup_possible: "Pickup possible", province_hint: "Only the province or city is shown publicly, never your address.",
+    desc_hint: "Size, material, colour, condition. No address or phone number.", photo: "Photo", photo_hint: "Made smaller before upload and shown publicly. Please no faces.",
+    edit_listing: "Edit offer", new_listing: "List an item", cancel: "Cancel", save_changes: "Save changes", publish: "Publish",
+    please_check: "Please check:", v_title: "title with at least 3 characters", v_start: "starting price of at least 1", v_buynow: "buy-now price higher than the starting price (or leave empty)",
+    v_price: "price above 0", v_stock: "number of at least 1", v_tiers: "price tiers complete, with larger quantities and lower prices", v_stock_moq: "quantity at least as large as the minimum order",
+    v_pay: "at least one payment method", v_ship_cost: "valid delivery cost", v_delivery: "at least one delivery option or pickup", v_province: "province", v_city: "city",
+    uploading_photo: "Uploading photo …", saving: "Saving …", changes_saved: "Changes saved", listing_published: "Your offer is now visible to everyone.",
+    err_login: "Please log in.", err_not_found: "Not found.", err_own_bid: "You cannot bid on your own auction.", err_own_item: "This is your own offer.",
+    err_ended: "The auction has already ended.", err_min_bid: "Your bid must be at least {amount}.", err_no_buynow: "This auction has no buy-now price.",
+    err_has_bids: "Buy now is no longer possible because someone has already bid.", err_wholesale_pro: "Wholesale is only possible for trader accounts.",
+    err_auction_duration: "The auction duration is not valid.", err_fields_locked: "These details cannot be changed.",
+    err_auction_locked: "This auction already has bids or has ended and can no longer be edited.", err_tiers: "The price tiers are not valid: larger quantities and lower prices, at most 3 tiers.",
+    err_stock_moq: "The quantity available must be at least the minimum order.", err_buynow_start: "The buy-now price must be higher than the starting price.",
+    err_ship_invalid: "The delivery details are not valid.", err_ship_none: "Please give at least one delivery option or pickup.",
+    err_cart_invalid: "The cart is empty or not valid.", err_pay_method: "The payment method is not accepted for “{title}”.",
+    err_rate_limit: "Too many actions in a short time. Please wait a little and try again.",
+    err_one_seller: "One order can only contain items from one seller.", err_one_currency: "One order can only contain one currency.",
+    err_sold: "“{title}” is already sold.", err_running: "“{title}”: the auction is still running.", err_not_won: "“{title}”: you did not win this auction.",
+    err_qty: "“{title}”: invalid quantity.", err_moq: "“{title}”: the minimum order is {n}.", err_stock: "“{title}”: only {n} available.",
+    err_no_delivery: "“{title}” is not delivered to this country.",
+    privacy_title: "Privacy",
+    privacy_intro: "Here you can see which of your details others can see and which stay hidden.",
+    privacy_public_h: "What others can see",
+    privacy_public_1: "Your shop name and whether you sell privately or as a trader.",
+    privacy_public_2: "Your offers with photo, price, and the province or city.",
+    privacy_public_3: "In auctions, other bidders only see a shortened name (for example A***d).",
+    privacy_hidden_h: "What stays hidden",
+    privacy_hidden_1: "Your email address and password.",
+    privacy_hidden_2: "The country and town in your profile.",
+    privacy_hidden_3: "Your delivery address and phone number – only the seller of your order sees them.",
+    privacy_hidden_4: "Location data in photos: photos are re-saved before upload, which removes GPS information.",
+    privacy_limits: "Please note: accounts, messages and orders are stored on servers of the service Supabase in Frankfurt (Germany). The operators can technically access them. Do not write anything in messages that could put you in danger.",
+    privacy_inclusion: "Markthalle is built so that people who cannot or do not want to appear in public can also sell safely from home.",
+    profile_privacy: "Only your shop name and account type are public. Country and town are only visible to you and are used as defaults for your offers."
+  },
+
+  fa: {
+    site_name: "مارکت‌هاله", tagline: "از خانه بفروشید – در افغانستان و خارج از کشور",
+    proto_banner: "مرحلهٔ آزمایشی. پرداخت‌ها هنوز از طریق مارکت‌هاله انجام نمی‌شود: خریدار و فروشنده دربارهٔ پرداخت مستقیم توافق می‌کنند.",
+    search_ph: "جستجوی کالا یا فروشگاه", categories: "دسته‌ها", ship_to: "تحویل به", language: "زبان",
+    login: "ورود", cart: "سبد خرید", sell: "فروختن", footer_text: "مارکت‌هاله · بازار برای کسب‌وکارهای خانگی، تاجران و عمده‌فروشی",
+    my_area: "حساب من", all: "همه", all_categories: "همهٔ دسته‌ها", all_listings: "همهٔ پیشنهادها", all_types: "همهٔ انواع پیشنهاد",
+    hero_title: "کسب‌وکار شما، از خانه", hero_body: "صنایع دستی، لباس، مواد غذایی و چیزهای دیگر را بفروشید – به خریداران در افغانستان و خارج از کشور.",
+    hero_cta_sell: "شروع فروش", safety_title: "فروش امن",
+    cat_handicraft: "صنایع دستی و گلدوزی", cat_clothing: "لباس", cat_carpets: "قالین و منسوجات", cat_jewelry: "زیورات",
+    cat_food: "مواد غذایی و شیرینی", cat_dryfruit: "میوهٔ خشک و ادویه", cat_beauty: "لوازم آرایشی طبیعی", cat_home: "خانه و آشپزخانه",
+    cat_electronics: "الکترونیک", cat_books: "کتاب و آموزش", cat_other: "سایر",
+    cond_new: "نو", cond_like_new: "مثل نو", cond_good: "خوب", cond_acceptable: "قابل قبول", cond_defect: "خراب",
+    unit_piece: "دانه", unit_pack: "بسته", unit_box: "کارتن", unit_dozen: "درجن", unit_kg: "کیلوگرام", unit_liter: "لیتر", unit_meter: "متر",
+    cur_AFN: "افغانی", cur_USD: "دالر امریکایی", cur_EUR: "یورو",
+    pay_cash: "نقد هنگام تحویل", pay_mobile: "پول موبایلی", pay_hawala: "حواله",
+    type_auction: "لیلام", type_fixed: "قیمت ثابت", type_wholesale: "عمده‌فروشی",
+    status_offen: "باز", status_versendet: "ارسال شد", status_abgeholt: "تحویل گرفته شد",
+    seller_private: "شخصی", seller_pro: "تاجر",
+    sold: "فروخته شد", sold_out: "تمام شد", ended: "پایان یافت", from: "از", you: "شما", free: "رایگان",
+    n_bids: "{n} پیشنهاد قیمت", start_price: "قیمت آغازین", buy_now_x: "خرید فوری {amount}", n_in_stock: "{n} موجود", only_n_left: "تنها {n} باقی مانده",
+    moq_x: "حداقل سفارش {n} {unit}", n_available: "{n} {unit} موجود است", n_listings: "{n} پیشنهاد", n_days: "{n} روز",
+    delivery_to_x: "تحویل به {country}", no_delivery_to: "به {country} تحویل نمی‌دهد", pickup_only: "فقط تحویل حضوری", free_shipping: "ارسال رایگان",
+    shipping_x: "ارسال {amount}", days_x: "{d} روز", approx_days: "حدود {d} روز کاری (برآورد فروشنده)",
+    customs_short: "ممکن است گمرک داشته باشد", customs_long: "این ارسال از مرز می‌گذرد: ممکن است گمرک، مالیات واردات و هزینهٔ پست اضافه شود. این‌ها در قیمت شامل نیستند.",
+    zone_inland: "داخل {country}", zone_eu: "سایر کشورهای اتحادیهٔ اروپا", zone_welt: "خارج از کشور", pickup_in: "تحویل حضوری در {place}", all_delivery_options: "همهٔ گزینه‌های تحویل",
+    left_dh: "{d} روز {h} ساعت", left_hm: "{h} ساعت {m} دقیقه", left_ms: "{m}:{s} دقیقه",
+    listing_type: "نوع پیشنهاد", seller: "فروشنده", private_and_pro: "شخصی و تاجر", only_private: "فقط شخصی", only_pro: "فقط تاجر",
+    origin: "مبدأ", home_and_abroad: "داخل و خارج", only_from_x: "فقط از {country}", only_abroad: "فقط از خارج",
+    sort: "ترتیب", sort_new: "جدیدترین", sort_ending: "نزدیک به پایان", sort_asc: "قیمت: کم به زیاد", sort_desc: "قیمت: زیاد به کم", only_deliverable: "فقط قابل تحویل", refresh_failed: "به‌روزرسانی ناکام شد:",
+    n_hidden: "{n} پیشنهاد به {country} تحویل نمی‌دهد و پنهان است.", show_anyway: "باز هم نشان بده",
+    empty_title: "هنوز پیشنهادی نیست", empty_body: "مارکت‌هاله تازه شروع شده است. اولین کسی باشید که چیزی برای فروش می‌گذارد – به‌عنوان فروشندهٔ شخصی، تاجر یا عمده‌فروش.", empty_cta: "گذاشتن اولین کالا",
+    nothing_found: "چیزی پیدا نشد", nothing_found_body: "کلمهٔ دیگر، دستهٔ دیگر یا فیلترهای کمتر را امتحان کنید.", results_for: "نتایج برای «{q}»",
+    loading: "در حال بارگذاری …", load_listings_fail: "پیشنهادها بارگذاری نشدند", retry: "دوباره امتحان کنید",
+    load_fail_title: "صفحه کامل بارگذاری نشد.", load_fail_body: "لطفاً اتصال انترنت خود را بررسی کنید و صفحه را دوباره باز کنید.",
+    watch: "افزودن به فهرست علاقه‌مندی", unwatch: "حذف از فهرست علاقه‌مندی", watched: "به فهرست علاقه‌مندی اضافه شد", unwatched: "از فهرست علاقه‌مندی حذف شد", watch_short: "نشانی کردن", watched_short: "نشانی شده",
+    login_needed: "لطفاً برای ادامه وارد شوید.", login_to_sell: "لطفاً برای فروختن وارد شوید.", login_to_watch: "لطفاً برای استفاده از فهرست علاقه‌مندی وارد شوید.",
+    login_to_bid: "لطفاً برای پیشنهاد قیمت وارد شوید.", login_to_buy: "لطفاً برای خرید وارد شوید.", login_to_message: "لطفاً برای فرستادن پیام وارد شوید.",
+    ship_to_set: "کشور تحویل: {country}",
+    tab_listings: "پیشنهادهای من ({n})", tab_messages: "پیام‌ها", tab_sales: "فروش‌ها", tab_orders: "خریدها ({n})", tab_bids: "پیشنهادهای قیمت ({n})", tab_watch: "علاقه‌مندی‌ها ({n})", tab_profile: "پروفایل",
+    account_private: "حساب شخصی", account_pro: "حساب تاجر", logout: "خروج", logged_out: "خارج شدید", logged_in: "وارد شدید",
+    no_listings_title: "هنوز پیشنهادی ندارید", no_listings_body: "با «فروختن» اولین کالای خود را بگذارید.",
+    sold_for: "به {amount} فروخته شد", auction_won_by: "پایان یافت، بالاترین پیشنهاد {amount} از {who}. خریدار اکنون می‌تواند خرید را تکمیل کند.", ended_no_bids: "بدون پیشنهاد پایان یافت",
+    edit: "ویرایش", delete: "حذف", confirm_delete: "واقعاً حذف شود؟", deleted: "پیشنهاد حذف شد", err_delete: "پیشنهاد حذف نشد. پیشنهادهایی که قیمت پیشنهادی دارند حذف نمی‌شوند.",
+    no_messages_title: "هنوز پیامی نیست", no_messages_body: "یک پیشنهاد را باز کنید و «پیام به فروشنده» را بزنید. پیام‌های مربوط به سفارش‌های شما نیز این‌جا دیده می‌شوند.",
+    conv_with_seller: "با فروشنده {name}", conv_with_buyer: "با خریدار {name}", new_badge: "جدید", open: "باز کردن",
+    no_sales_title: "هنوز فروشی نیست", no_sales_body: "وقتی کسی از شما بخرد، سفارش را این‌جا می‌بینید.",
+    sales_hint: "برای توافق دربارهٔ پرداخت و تحویل به خریدار پیام بدهید. مارکت‌هاله هنوز پرداخت‌ها را انجام نمی‌دهد.",
+    order_no: "سفارش {no}", buyer_x: "خریدار: {name}", seller_x: "فروشنده: {name}", payment_x: "پرداخت: {method}", deliver_to: "تحویل به:", phone: "تلفن",
+    pickup: "تحویل حضوری", mark_shipped: "علامت‌گذاری به‌عنوان ارسال‌شده", mark_picked_up: "علامت‌گذاری به‌عنوان تحویل‌گرفته‌شده", status_saved: "وضعیت ذخیره شد",
+    message_buyer: "پیام به خریدار", message_seller: "پیام به فروشنده",
+    no_orders_title: "هنوز خریدی نکرده‌اید", no_orders_body: "کالاهایی که می‌خرید این‌جا دیده می‌شوند.",
+    no_bids_title: "هنوز پیشنهاد قیمتی نداده‌اید", no_bids_body: "یک لیلام را باز کنید و پیشنهاد قیمت بدهید.",
+    won_for: "به {amount} برنده شدید", bought: "خریداری شد", in_cart: "در سبد خرید", add_to_cart: "افزودن به سبد خرید", update_cart: "تغییر تعداد در سبد خرید",
+    not_won: "برنده نشدید", you_lead: "شما بالاترین پیشنهاددهنده هستید", outbid: "پیشنهاد بالاتر داده شد", your_bid_x: "پیشنهاد شما {amount}",
+    no_watch_title: "فهرست علاقه‌مندی شما خالی است", no_watch_body: "روی قلب یک پیشنهاد بزنید تا این‌جا جمع شود.", auction_ended: "لیلام پایان یافت", remove: "حذف",
+    i_sell_as: "من می‌فروشم به‌عنوان", seller_type_hint: "تاجران می‌توانند عمده‌فروشی با حداقل سفارش و قیمت‌های پله‌ای هم پیشنهاد کنند. این مورد فعلاً بررسی نمی‌شود.",
+    shop_name: "نام فروشگاه", shop_name_hint: "کنار پیشنهادهای شما به همه نشان داده می‌شود. لازم نیست نام واقعی خود را بنویسید.",
+    country: "کشور", province: "ولایت", city: "شهر",
+    save_profile: "ذخیرهٔ پروفایل", profile_saved: "پروفایل ذخیره شد", err_name_short: "نام باید حداقل ۲ حرف داشته باشد.",
+    safety_intro: "این نکته‌ها به شما کمک می‌کنند که از خانه با امنیت بفروشید:",
+    safety_1: "به‌جای نام واقعی از نام فروشگاه استفاده کنید.",
+    safety_2: "در عکس‌ها چهره، خانه یا کوچهٔ خود را نشان ندهید.",
+    safety_3: "آدرس یا شمارهٔ تلفن خود را در توضیحات ننویسید. اول از طریق پیام‌های مارکت‌هاله با خریدار صحبت کنید.",
+    safety_4: "کالا را در جای امن و آشنا تحویل بدهید – بهتر است همراه یکی از اعضای خانواده یا شخص مورد اعتماد.",
+    safety_5: "شمارهٔ تلفن خود را فقط وقتی بدهید که به خریدار اعتماد دارید.",
+    safety_6: "در حواله یا پول موبایلی، پیش از فرستادن کالا مطمئن شوید که پول رسیده است.",
+    safety_note: "مارکت‌هاله از محل شما فقط ولایت را به همه نشان می‌دهد، هرگز آدرس دقیق را.",
+    register: "ثبت‌نام", email: "ایمیل", password: "رمز", password_hint: "حداقل ۸ حرف.", create_account: "ساختن حساب",
+    forgot_password: "رمز را فراموش کرده‌اید؟", signup_name_hint: "به همه نشان داده می‌شود. می‌توانید به‌جای نام واقعی نام فروشگاه بنویسید.",
+    signup_confirm_hint: "پس از ثبت‌نام یک ایمیل با لینک تأیید دریافت می‌کنید. پس از تأیید می‌توانید وارد شوید.",
+    reset_intro: "ایمیل خود را بنویسید. برای شما لینکی می‌فرستیم تا رمز تازه بگذارید.", send_link: "فرستادن لینک", back_to_login: "بازگشت به ورود",
+    newpass_intro: "اکنون یک رمز تازه بگذارید.", new_password: "رمز تازه", save_password: "ذخیرهٔ رمز", reset_title: "بازنشانی رمز",
+    account_created: "حساب ساخته شد و وارد شدید", almost_done: "تقریباً تمام است", confirm_email_title: "لطفاً ایمیل خود را تأیید کنید.",
+    confirm_email_body: "ما به {email} ایمیلی فرستادیم. روی لینک داخل آن بزنید تا وارد شوید.",
+    confirm_email_spam: "ایمیلی نرسید؟ پوشهٔ اسپم را ببینید.", email_sent: "ایمیل فرستاده شد", reset_sent: "اگر برای {email} حسابی باشد، لینک بازنشانی رمز را فرستادیم.",
+    password_saved: "رمز تازه ذخیره شد", email_confirmed: "ایمیل تأیید شد. شما وارد شدید.", link_invalid: "این لینک نامعتبر است یا منقضی شده است. لطفاً لینک تازه بخواهید.",
+    err_email_invalid: "لطفاً یک ایمیل درست بنویسید.", err_password_short: "رمز باید حداقل ۸ حرف داشته باشد.", err_password_missing: "لطفاً رمز خود را بنویسید.",
+    err_credentials: "ایمیل یا رمز اشتباه است.", err_email_unconfirmed: "لطفاً اول ایمیل خود را با لینک داخل ایمیل تأیید کنید.",
+    err_registered: "برای این ایمیل از قبل حساب وجود دارد. لطفاً وارد شوید.", err_network: "اتصال به سرور برقرار نشد. لطفاً انترنت خود را بررسی کنید.",
+    err_unknown: "خطای نامعلوم.", err_image_size: "عکس خیلی بزرگ است.", err_image_read: "عکس خوانده نشد.",
+    chat_safety: "شمارهٔ تلفن یا آدرس خود را فقط وقتی بدهید که به طرف مقابل اعتماد دارید.", message: "پیام", write_message: "پیام بنویسید …", send: "فرستادن",
+    no_messages_yet: "هنوز پیامی نیست. اولین پیام را بنویسید.", view_listing: "دیدن پیشنهاد",
+    winning_bid: "پیشنهاد برنده", current_bid: "پیشنهاد فعلی", status: "وضعیت", ends_in: "پایان در",
+    you_won: "شما برنده شدید. کالا را به سبد خرید اضافه کنید تا خرید تکمیل شود.", you_won_bought: "شما برنده شدید و این کالا را خریدید.", won_by: "برنده: {who}.",
+    own_auction: "این پیشنهاد خودتان است. روی لیلام خود نمی‌توانید پیشنهاد بدهید.", bid_needs_delivery: "فقط وقتی می‌توانید پیشنهاد بدهید که فروشنده به کشور تحویل شما بفرستد. کشور تحویل را در بالا تغییر دهید.",
+    your_bid: "پیشنهاد شما ({cur})", place_bid: "دادن پیشنهاد", min_bid_hint: "حداقل پیشنهاد {amount}. پیشنهاد الزام‌آور است.",
+    buy_now: "خرید فوری", buy_now_hint: "تا زمانی ممکن است که کسی پیشنهاد نداده باشد.", bid_history: "تاریخچهٔ پیشنهادها", no_bids_yet: "هنوز پیشنهادی نیست.",
+    tier_prices_per: "قیمت‌های پله‌ای برای هر {unit}", quantity: "تعداد", price_per: "قیمت هر {unit}",
+    custom_offer: "پیشنهاد ویژه", custom_offer_hint: "تعداد دیگر، طرح خاص یا قیمت خودتان؟ مستقیم از تاجر بپرسید.",
+    target_price: "قیمت شما برای هر {unit} ({cur})", request_offer: "درخواست پیشنهاد",
+    rfq_text: "سلام، من به {qty} {unit} علاقه دارم.", rfq_text_price: "آیا هر واحد را به {price} می‌دهید؟",
+    payment_methods: "روش‌های پرداخت", payment_hint: "دربارهٔ پرداخت مستقیم با فروشنده توافق می‌کنید.",
+    location: "محل", condition: "حالت", category: "دسته", listed_on: "تاریخ گذاشتن", description: "توضیحات", no_description: "توضیحی نیست.",
+    listing_gone: "این پیشنهاد دیگر وجود ندارد.", err_whole_number: "لطفاً یک عدد کامل بنویسید.",
+    err_moq_short: "حداقل سفارش {n} {unit} است.", err_stock_short: "تنها {n} {unit} موجود است.",
+    shipping: "ارسال", total: "مجموع", subtotal: "جمع جزئی", err_amount: "لطفاً یک مبلغ بنویسید.",
+    bid_placed: "پیشنهاد {amount} ثبت شد", buy_now_done: "لیلام با قیمت خرید فوری پایان یافت. اکنون خرید را تکمیل کنید.",
+    err_cannot_buy: "این کالا قابل خرید نیست.", cart_updated: "تعداد در سبد خرید تغییر کرد", added_to_cart: "به سبد خرید اضافه شد", not_available: "دیگر موجود نیست",
+    cart_empty_title: "سبد خرید شما خالی است", cart_empty_body: "کالاهای قیمت ثابت و عمده و لیلام‌هایی که برنده می‌شوید این‌جا جمع می‌شوند.",
+    cart_hint: "برای هر فروشنده یک سفارش جداگانه ثبت می‌شود.", order_from: "سفارش از {name}", fix_cart: "لطفاً کالاهای علامت‌دار را حذف یا درست کنید.", checkout_this: "سفارش از این فروشنده",
+    how_payment_works: "پرداخت چگونه است",
+    how_payment_body: "مارکت‌هاله هنوز پرداخت‌ها را انجام نمی‌دهد. پس از سفارش، شما و فروشنده از طریق پیام دربارهٔ پرداخت و تحویل توافق می‌کنید. فقط به فروشندگانی پول بدهید که به آن‌ها اعتماد دارید، و در حواله یا پول موبایلی فقط پس از توافق کامل.",
+    name_for_delivery: "نام برای تحویل", name_for_delivery_hint: "فقط فروشنده این را می‌بیند.",
+    address_desc: "آدرس یا محل ملاقات", address_desc_hint: "ناحیه، سرک، نشانی نزدیک – یا خالی بگذارید و محل ملاقات را در پیام‌ها توافق کنید.",
+    phone_optional: "تلفن (اختیاری)", phone_hint: "فقط فروشنده این را می‌بیند. همه چیز را می‌توانید از طریق پیام هم توافق کنید.",
+    payment_method: "روش پرداخت", no_common_pay: "این کالاها روش پرداخت مشترک ندارند.",
+    checkout: "تکمیل خرید", back: "بازگشت", place_order: "ثبت سفارش الزام‌آور", sending: "در حال فرستادن …", err_need_name_city: "لطفاً نام و ولایت یا شهر را بنویسید.",
+    order_sent: "سفارش فرستاده شد", order_number: "شمارهٔ سفارش", order_sent_body: "سفارش شما به فروشنده رسید.",
+    order_next: "برای توافق دربارهٔ پرداخت و تحویل به فروشنده پیام بدهید. سفارش را در «حساب من» ← «خریدها» پیدا می‌کنید.", to_my_orders: "به خریدهای من",
+    profile_loading: "پروفایل شما هنوز بارگذاری می‌شود. لطفاً چند لحظه بعد دوباره امتحان کنید.",
+    ends_at: "پایان {date}", type_locked: "نوع پیشنهاد پس از گذاشتن تغییر نمی‌کند.", wholesale_needs_pro: "عمده‌فروشی برای تاجران است. حساب خود را در «حساب من» ← «پروفایل» تغییر دهید.",
+    ship_cost_for: "هزینهٔ ارسال {zone}", ship_days_for: "مدت ارسال {zone}", cost: "هزینه", days_placeholder: "روز، مثلاً ۳–۵",
+    sell_safety_short: "نام واقعی، آدرس، شمارهٔ تلفن یا چهره را در پیشنهاد نگذارید.",
+    selling_as: "شما به‌عنوان {kind} از {country} می‌فروشید (در پروفایل قابل تغییر است).",
+    title: "عنوان", title_hint: "چیست و چه ویژگی خاصی دارد؟", currency: "واحد پول",
+    buy_now_price: "قیمت خرید فوری", duration: "مدت", price_each: "قیمت هر دانه", stock_count: "تعداد موجود",
+    unit: "واحد", stock_qty: "مقدار موجود", tier_prices: "قیمت‌های پله‌ای", tier_hint: "پلهٔ اول حداقل سفارش است. پله‌های بعدی اختیاری‌اند، با تعداد بیشتر و قیمت کمتر.",
+    min_qty: "حداقل تعداد", tier_from: "پلهٔ {n}: از تعداد", price_per_unit: "قیمت هر واحد",
+    payment_methods_hint: "کدام روش‌های پرداخت را قبول دارید؟", delivery: "تحویل", delivery_hint: "انتخاب کنید به کجا می‌فرستید و هزینه و مدت ارسال را بنویسید. برای ارسال رایگان هزینه را خالی یا ۰ بگذارید.",
+    pickup_possible: "تحویل حضوری ممکن است", province_hint: "فقط ولایت یا شهر به همه نشان داده می‌شود، هرگز آدرس شما.",
+    desc_hint: "اندازه، جنس، رنگ، حالت. بدون آدرس یا شمارهٔ تلفن.", photo: "عکس", photo_hint: "پیش از بارگذاری کوچک می‌شود و به همه نشان داده می‌شود. لطفاً بدون چهره.",
+    edit_listing: "ویرایش پیشنهاد", new_listing: "گذاشتن کالا", cancel: "لغو", save_changes: "ذخیرهٔ تغییرات", publish: "نشر کردن",
+    please_check: "لطفاً بررسی کنید:", v_title: "عنوان با حداقل ۳ حرف", v_start: "قیمت آغازین حداقل ۱", v_buynow: "قیمت خرید فوری بیشتر از قیمت آغازین (یا خالی)",
+    v_price: "قیمت بیشتر از ۰", v_stock: "تعداد حداقل ۱", v_tiers: "قیمت‌های پله‌ای کامل، با تعداد بیشتر و قیمت کمتر", v_stock_moq: "مقدار موجود حداقل به اندازهٔ حداقل سفارش",
+    v_pay: "حداقل یک روش پرداخت", v_ship_cost: "هزینهٔ ارسال درست", v_delivery: "حداقل یک گزینهٔ تحویل یا تحویل حضوری", v_province: "ولایت", v_city: "شهر",
+    uploading_photo: "در حال بارگذاری عکس …", saving: "در حال ذخیره …", changes_saved: "تغییرات ذخیره شد", listing_published: "پیشنهاد شما اکنون برای همه دیده می‌شود.",
+    err_login: "لطفاً وارد شوید.", err_not_found: "پیدا نشد.", err_own_bid: "روی لیلام خود نمی‌توانید پیشنهاد بدهید.", err_own_item: "این پیشنهاد خودتان است.",
+    err_ended: "لیلام قبلاً پایان یافته است.", err_min_bid: "پیشنهاد شما باید حداقل {amount} باشد.", err_no_buynow: "این لیلام قیمت خرید فوری ندارد.",
+    err_has_bids: "خرید فوری دیگر ممکن نیست، چون کسی پیشنهاد داده است.", err_wholesale_pro: "عمده‌فروشی فقط برای حساب‌های تاجر ممکن است.",
+    err_auction_duration: "مدت لیلام درست نیست.", err_fields_locked: "این معلومات قابل تغییر نیستند.",
+    err_auction_locked: "این لیلام پیشنهاد دارد یا پایان یافته و دیگر قابل ویرایش نیست.", err_tiers: "قیمت‌های پله‌ای درست نیستند: تعداد بیشتر و قیمت کمتر، حداکثر ۳ پله.",
+    err_stock_moq: "مقدار موجود باید حداقل به اندازهٔ حداقل سفارش باشد.", err_buynow_start: "قیمت خرید فوری باید بیشتر از قیمت آغازین باشد.",
+    err_ship_invalid: "معلومات ارسال درست نیست.", err_ship_none: "لطفاً حداقل یک گزینهٔ تحویل یا تحویل حضوری بدهید.",
+    err_cart_invalid: "سبد خرید خالی یا نادرست است.", err_pay_method: "این روش پرداخت برای «{title}» قبول نمی‌شود.",
+    err_rate_limit: "در مدت کوتاه کارهای زیادی انجام شد. لطفاً کمی صبر کنید و دوباره امتحان کنید.",
+    err_one_seller: "یک سفارش فقط می‌تواند کالاهای یک فروشنده را داشته باشد.", err_one_currency: "یک سفارش فقط می‌تواند یک واحد پول داشته باشد.",
+    err_sold: "«{title}» قبلاً فروخته شده است.", err_running: "«{title}»: لیلام هنوز جریان دارد.", err_not_won: "«{title}»: شما این لیلام را نبرده‌اید.",
+    err_qty: "«{title}»: تعداد نادرست است.", err_moq: "«{title}»: حداقل سفارش {n} است.", err_stock: "«{title}»: تنها {n} موجود است.",
+    err_no_delivery: "«{title}» به این کشور فرستاده نمی‌شود.",
+    privacy_title: "حریم خصوصی",
+    privacy_intro: "این‌جا می‌بینید کدام معلومات شما برای دیگران دیده می‌شود و کدام پنهان می‌ماند.",
+    privacy_public_h: "آنچه دیگران می‌بینند",
+    privacy_public_1: "نام فروشگاه شما و این‌که شخصی می‌فروشید یا به‌عنوان تاجر.",
+    privacy_public_2: "پیشنهادهای شما با عکس، قیمت و ولایت یا شهر.",
+    privacy_public_3: "در لیلام، دیگر پیشنهاددهندگان فقط نام کوتاه‌شده را می‌بینند (مثلاً A***d).",
+    privacy_hidden_h: "آنچه پنهان می‌ماند",
+    privacy_hidden_1: "ایمیل و رمز شما.",
+    privacy_hidden_2: "کشور و شهر در پروفایل شما.",
+    privacy_hidden_3: "آدرس تحویل و شمارهٔ تلفن شما – فقط فروشندهٔ سفارش شما آن‌ها را می‌بیند.",
+    privacy_hidden_4: "معلومات موقعیت در عکس‌ها: عکس‌ها پیش از بارگذاری دوباره ذخیره می‌شوند و معلومات GPS پاک می‌شود.",
+    privacy_limits: "لطفاً توجه کنید: حساب‌ها، پیام‌ها و سفارش‌ها روی سرورهای خدمات Supabase در فرانکفورت (آلمان) ذخیره می‌شوند. گردانندگان از نظر فنی به آن‌ها دسترسی دارند. در پیام‌ها چیزی ننویسید که شما را در خطر بیندازد.",
+    privacy_inclusion: "مارکت‌هاله طوری ساخته شده است که کسانی که نمی‌توانند یا نمی‌خواهند در جامعه ظاهر شوند هم بتوانند با امنیت از خانه بفروشند.",
+    profile_privacy: "فقط نام فروشگاه و نوع حساب شما برای همه دیده می‌شود. کشور و شهر فقط برای خودتان دیده می‌شود و برای پیشنهادهای شما پیش‌فرض است."
+  },
+
+  ps: {
+    site_name: "مارکت‌هاله", tagline: "له کوره وپلورئ – په افغانستان او بهر کې",
+    proto_banner: "آزمایښتي پړاو. تادیات لا تر اوسه د مارکت‌هالې له لارې نه کېږي: پېرودونکی او پلورونکی د تادیې په اړه مستقیم موافقه کوي.",
+    search_ph: "د توکو یا هټیو لټون", categories: "کټګورۍ", ship_to: "سپارل ته", language: "ژبه",
+    login: "ننوتل", cart: "د پېر ټوکرۍ", sell: "پلورل", footer_text: "مارکت‌هاله · د کورني کار، سوداګرو او عمده پلور بازار",
+    my_area: "زما حساب", all: "ټول", all_categories: "ټولې کټګورۍ", all_listings: "ټول وړاندیزونه", all_types: "د وړاندیز ټول ډولونه",
+    hero_title: "ستاسو کاروبار، له کوره", hero_body: "لاسي صنایع، جامې، خواړه او نور شیان وپلورئ – په افغانستان او بهر کې پېرودونکو ته.",
+    hero_cta_sell: "پلور پیل کړئ", safety_title: "خوندي پلور",
+    cat_handicraft: "لاسي صنایع او ګنډل", cat_clothing: "جامې", cat_carpets: "غالۍ او ټوکر", cat_jewelry: "ګاڼې",
+    cat_food: "خواړه او پخلی", cat_dryfruit: "وچه مېوه او مصالحې", cat_beauty: "طبیعي ښکلا توکي", cat_home: "کور او پخلنځی",
+    cat_electronics: "برېښنایي توکي", cat_books: "کتابونه او زده کړه", cat_other: "نور",
+    cond_new: "نوی", cond_like_new: "لکه نوی", cond_good: "ښه", cond_acceptable: "د منلو وړ", cond_defect: "خراب",
+    unit_piece: "دانه", unit_pack: "بسته", unit_box: "کارتن", unit_dozen: "درجن", unit_kg: "کیلو ګرام", unit_liter: "لیتر", unit_meter: "متر",
+    cur_AFN: "افغانۍ", cur_USD: "امریکايي ډالر", cur_EUR: "یورو",
+    pay_cash: "د سپارلو پر وخت نغدې", pay_mobile: "موبایلي پیسې", pay_hawala: "حواله",
+    type_auction: "لیلام", type_fixed: "ثابته بیه", type_wholesale: "عمده پلور",
+    status_offen: "خلاص", status_versendet: "ولېږل شو", status_abgeholt: "واخیستل شو",
+    seller_private: "شخصي", seller_pro: "سوداګر",
+    sold: "وپلورل شو", sold_out: "خلاص شو", ended: "پای ته ورسېد", from: "له", you: "تاسو", free: "وړیا",
+    n_bids: "{n} وړاندیزونه", start_price: "پیلیزه بیه", buy_now_x: "سمدستي پېرل {amount}", n_in_stock: "{n} موجود", only_n_left: "یوازې {n} پاتې",
+    moq_x: "لږ تر لږه فرمایش {n} {unit}", n_available: "{n} {unit} موجود دي", n_listings: "{n} وړاندیزونه", n_days: "{n} ورځې",
+    delivery_to_x: "{country} ته سپارل", no_delivery_to: "{country} ته نه سپاري", pickup_only: "یوازې حضوري سپارل", free_shipping: "وړیا لېږل",
+    shipping_x: "لېږل {amount}", days_x: "{d} ورځې", approx_days: "شاوخوا {d} کاري ورځې (د پلورونکي اټکل)",
+    customs_short: "ښايي ګمرک ولري", customs_long: "دا لېږل له پولې تېرېږي: ښايي ګمرک، د وارداتو مالیه او د پوستې لګښت ورزیات شي. دا په بیه کې شامل نه دي.",
+    zone_inland: "د {country} دننه", zone_eu: "د اروپايي اتحادیې نور هېوادونه", zone_welt: "بهر", pickup_in: "په {place} کې حضوري سپارل", all_delivery_options: "د سپارلو ټولې لارې",
+    left_dh: "{d} ورځې {h} ساعته", left_hm: "{h} ساعته {m} دقیقې", left_ms: "{m}:{s} دقیقې",
+    listing_type: "د وړاندیز ډول", seller: "پلورونکی", private_and_pro: "شخصي او سوداګر", only_private: "یوازې شخصي", only_pro: "یوازې سوداګر",
+    origin: "سرچینه", home_and_abroad: "دننه او بهر", only_from_x: "یوازې له {country}", only_abroad: "یوازې له بهر",
+    sort: "ترتیب", sort_new: "نوي لومړی", sort_ending: "ژر پای ته رسېږي", sort_asc: "بیه: له ټیټې تر لوړې", sort_desc: "بیه: له لوړې تر ټیټې", only_deliverable: "یوازې د سپارلو وړ", refresh_failed: "تازه کول ناکام شول:",
+    n_hidden: "{n} وړاندیزونه {country} ته نه سپارل کېږي او پټ دي.", show_anyway: "بیا هم وښایه",
+    empty_title: "لا تر اوسه وړاندیز نشته", empty_body: "مارکت‌هاله نوې پیل شوې ده. لومړی کس اوسئ چې د پلور لپاره څه ږدي – د شخصي پلورونکي، سوداګر یا عمده پلورونکي په توګه.", empty_cta: "لومړی توکی کېښودل",
+    nothing_found: "هیڅ ونه موندل شو", nothing_found_body: "بله کلمه، بله کټګوري یا لږ فلټرونه وازمویئ.", results_for: "د «{q}» پایلې",
+    loading: "پورته کېږي …", load_listings_fail: "وړاندیزونه پورته نه شول", retry: "بیا هڅه وکړئ",
+    load_fail_title: "پاڼه بشپړه پورته نه شوه.", load_fail_body: "مهرباني وکړئ خپل انټرنېټ وګورئ او پاڼه بیا خلاصه کړئ.",
+    watch: "د خوښې لېست ته ورزیاتول", unwatch: "له خوښې لېست څخه لرې کول", watched: "د خوښې لېست ته ورزیات شو", unwatched: "له خوښې لېست څخه لرې شو", watch_short: "نښه کول", watched_short: "نښه شوی",
+    login_needed: "مهرباني وکړئ د دوام لپاره ننوځئ.", login_to_sell: "مهرباني وکړئ د پلورلو لپاره ننوځئ.", login_to_watch: "مهرباني وکړئ د خوښې لېست لپاره ننوځئ.",
+    login_to_bid: "مهرباني وکړئ د بیې وړاندیز لپاره ننوځئ.", login_to_buy: "مهرباني وکړئ د پېرلو لپاره ننوځئ.", login_to_message: "مهرباني وکړئ د پیغام لېږلو لپاره ننوځئ.",
+    ship_to_set: "د سپارلو هېواد: {country}",
+    tab_listings: "زما وړاندیزونه ({n})", tab_messages: "پیغامونه", tab_sales: "پلورونه", tab_orders: "پېرودنې ({n})", tab_bids: "د بیې وړاندیزونه ({n})", tab_watch: "خوښې ({n})", tab_profile: "پروفایل",
+    account_private: "شخصي حساب", account_pro: "د سوداګر حساب", logout: "وتل", logged_out: "ووتلئ", logged_in: "ننوتلئ",
+    no_listings_title: "لا تر اوسه وړاندیز نه لرئ", no_listings_body: "د «پلورل» په واسطه خپل لومړی توکی کېږدئ.",
+    sold_for: "په {amount} وپلورل شو", auction_won_by: "پای ته ورسېد، تر ټولو لوړ وړاندیز {amount} د {who}. پېرودونکی اوس کولی شي پېر بشپړ کړي.", ended_no_bids: "پرته له وړاندیز پای ته ورسېد",
+    edit: "سمول", delete: "ړنګول", confirm_delete: "رښتیا ړنګ شي؟", deleted: "وړاندیز ړنګ شو", err_delete: "وړاندیز ړنګ نه شو. هغه وړاندیزونه چې د بیې وړاندیز لري نه ړنګېږي.",
+    no_messages_title: "لا تر اوسه پیغام نشته", no_messages_body: "یو وړاندیز خلاص کړئ او «پلورونکي ته پیغام» وټکوئ. ستاسو د فرمایشونو پیغامونه هم دلته ښکاري.",
+    conv_with_seller: "له پلورونکي {name} سره", conv_with_buyer: "له پېرودونکي {name} سره", new_badge: "نوی", open: "خلاصول",
+    no_sales_title: "لا تر اوسه پلور نشته", no_sales_body: "کله چې څوک له تاسو واخلي، فرمایش دلته وینئ.",
+    sales_hint: "د تادیې او سپارلو په اړه د موافقې لپاره پېرودونکي ته پیغام ولېږئ. مارکت‌هاله لا تادیات نه کوي.",
+    order_no: "فرمایش {no}", buyer_x: "پېرودونکی: {name}", seller_x: "پلورونکی: {name}", payment_x: "تادیه: {method}", deliver_to: "سپارل ته:", phone: "تلیفون",
+    pickup: "حضوري سپارل", mark_shipped: "د لېږل شوي په توګه نښه کول", mark_picked_up: "د اخیستل شوي په توګه نښه کول", status_saved: "حالت خوندي شو",
+    message_buyer: "پېرودونکي ته پیغام", message_seller: "پلورونکي ته پیغام",
+    no_orders_title: "لا تر اوسه مو څه نه دي اخیستي", no_orders_body: "هغه توکي چې یې اخلئ دلته ښکاري.",
+    no_bids_title: "لا تر اوسه مو د بیې وړاندیز نه دی کړی", no_bids_body: "یو لیلام خلاص کړئ او د بیې وړاندیز وکړئ.",
+    won_for: "په {amount} مو وګټله", bought: "واخیستل شو", in_cart: "په ټوکرۍ کې", add_to_cart: "ټوکرۍ ته ورزیاتول", update_cart: "په ټوکرۍ کې شمېر بدلول",
+    not_won: "مو ونه ګټله", you_lead: "تاسو تر ټولو لوړ وړاندیز کوونکی یاست", outbid: "لوړ وړاندیز وشو", your_bid_x: "ستاسو وړاندیز {amount}",
+    no_watch_title: "ستاسو د خوښې لېست تش دی", no_watch_body: "د یو وړاندیز پر زړه ټک وکړئ چې دلته راټول شي.", auction_ended: "لیلام پای ته ورسېد", remove: "لرې کول",
+    i_sell_as: "زه پلورم د", seller_type_hint: "سوداګر کولی شي عمده پلور هم د لږ تر لږه فرمایش او پوړیزو بیو سره وړاندې کړي. دا اوس نه کتل کېږي.",
+    shop_name: "د هټۍ نوم", shop_name_hint: "ستاسو د وړاندیزونو تر څنګ ټولو ته ښودل کېږي. اړتیا نشته چې خپل ریښتیني نوم ولیکئ.",
+    country: "هېواد", province: "ولایت", city: "ښار",
+    save_profile: "پروفایل خوندي کول", profile_saved: "پروفایل خوندي شو", err_name_short: "نوم باید لږ تر لږه ۲ توري ولري.",
+    safety_intro: "دا لارښوونې تاسو سره مرسته کوي چې له کوره په خوندي ډول وپلورئ:",
+    safety_1: "د ریښتیني نوم پر ځای د هټۍ نوم وکاروئ.",
+    safety_2: "په انځورونو کې مخونه، خپل کور یا کوڅه مه ښکاره کوئ.",
+    safety_3: "خپله پته یا د تلیفون شمېره په تشریح کې مه لیکئ. لومړی د مارکت‌هالې د پیغامونو له لارې له پېرودونکي سره خبرې وکړئ.",
+    safety_4: "توکي په خوندي او پېژندل شوي ځای کې وسپارئ – غوره دا ده چې د کورنۍ له غړي یا باوري کس سره.",
+    safety_5: "د تلیفون شمېره یوازې هغه وخت ورکړئ چې پر پېرودونکي باور لرئ.",
+    safety_6: "په حواله یا موبایلي پیسو کې، د توکو له لېږلو مخکې ډاډ ترلاسه کړئ چې پیسې رسېدلې دي.",
+    safety_note: "مارکت‌هاله ستاسو د ځای څخه یوازې ولایت ټولو ته ښیي، هېڅکله دقیقه پته نه.",
+    register: "نوم لیکنه", email: "برېښنالیک", password: "پټنوم", password_hint: "لږ تر لږه ۸ توري.", create_account: "حساب جوړول",
+    forgot_password: "پټنوم مو هېر شوی؟", signup_name_hint: "ټولو ته ښودل کېږي. کولی شئ د ریښتیني نوم پر ځای د هټۍ نوم ولیکئ.",
+    signup_confirm_hint: "له نوم لیکنې وروسته د تایید لینک سره یو برېښنالیک ترلاسه کوئ. له تایید وروسته ننوتلی شئ.",
+    reset_intro: "خپل برېښنالیک ولیکئ. تاسو ته به یو لینک واستوو چې نوی پټنوم کېږدئ.", send_link: "لینک لېږل", back_to_login: "ننوتلو ته ستنېدل",
+    newpass_intro: "اوس نوی پټنوم کېږدئ.", new_password: "نوی پټنوم", save_password: "پټنوم خوندي کول", reset_title: "د پټنوم بیا ټاکل",
+    account_created: "حساب جوړ شو او ننوتلئ", almost_done: "نږدې بشپړ دی", confirm_email_title: "مهرباني وکړئ خپل برېښنالیک تایید کړئ.",
+    confirm_email_body: "موږ {email} ته یو برېښنالیک ولېږه. په هغه کې پر لینک ټک وکړئ چې ننوځئ.",
+    confirm_email_spam: "برېښنالیک ونه رسېد؟ د سپم فولډر وګورئ.", email_sent: "برېښنالیک ولېږل شو", reset_sent: "که د {email} لپاره حساب وي، د پټنوم د بیا ټاکلو لینک مو ولېږه.",
+    password_saved: "نوی پټنوم خوندي شو", email_confirmed: "برېښنالیک تایید شو. ننوتلئ.", link_invalid: "دا لینک ناسم دی یا یې وخت تېر شوی. مهرباني وکړئ نوی لینک وغواړئ.",
+    err_email_invalid: "مهرباني وکړئ سم برېښنالیک ولیکئ.", err_password_short: "پټنوم باید لږ تر لږه ۸ توري ولري.", err_password_missing: "مهرباني وکړئ خپل پټنوم ولیکئ.",
+    err_credentials: "برېښنالیک یا پټنوم غلط دی.", err_email_unconfirmed: "مهرباني وکړئ لومړی خپل برېښنالیک د برېښنالیک د لینک په واسطه تایید کړئ.",
+    err_registered: "د دې برېښنالیک لپاره دمخه حساب شته. مهرباني وکړئ ننوځئ.", err_network: "له سرور سره اړیکه ونه شوه. مهرباني وکړئ خپل انټرنېټ وګورئ.",
+    err_unknown: "نامعلومه تېروتنه.", err_image_size: "انځور ډېر لوی دی.", err_image_read: "انځور ونه لوستل شو.",
+    chat_safety: "د تلیفون شمېره یا پته یوازې هغه وخت ورکړئ چې پر بل لوري باور لرئ.", message: "پیغام", write_message: "پیغام ولیکئ …", send: "لېږل",
+    no_messages_yet: "لا تر اوسه پیغام نشته. لومړی پیغام ولیکئ.", view_listing: "وړاندیز کتل",
+    winning_bid: "ګټونکی وړاندیز", current_bid: "اوسنی وړاندیز", status: "حالت", ends_in: "پای ته رسېږي په",
+    you_won: "تاسو وګټل. توکی ټوکرۍ ته ورزیات کړئ چې پېر بشپړ شي.", you_won_bought: "تاسو وګټل او دا توکی مو واخیست.", won_by: "ګټونکی: {who}.",
+    own_auction: "دا ستاسو خپل وړاندیز دی. پر خپل لیلام وړاندیز نه شئ کولی.", bid_needs_delivery: "یوازې هغه وخت وړاندیز کولی شئ چې پلورونکی ستاسو د سپارلو هېواد ته ولېږي. د سپارلو هېواد پورته بدل کړئ.",
+    your_bid: "ستاسو وړاندیز ({cur})", place_bid: "وړاندیز کول", min_bid_hint: "لږ تر لږه وړاندیز {amount}. وړاندیز ژمنه ده.",
+    buy_now: "سمدستي پېرل", buy_now_hint: "تر هغه وخته ممکن دی چې چا وړاندیز نه وي کړی.", bid_history: "د وړاندیزونو تاریخچه", no_bids_yet: "لا تر اوسه وړاندیز نشته.",
+    tier_prices_per: "پوړیزې بیې د هر {unit} لپاره", quantity: "شمېر", price_per: "د هر {unit} بیه",
+    custom_offer: "ځانګړی وړاندیز", custom_offer_hint: "بل شمېر، ځانګړی ډیزاین یا خپله بیه؟ مستقیم له سوداګر څخه وپوښتئ.",
+    target_price: "ستاسو بیه د هر {unit} لپاره ({cur})", request_offer: "د وړاندیز غوښتنه",
+    rfq_text: "سلام، زه {qty} {unit} ته لېوال یم.", rfq_text_price: "ایا هر یو په {price} راکوئ؟",
+    payment_methods: "د تادیې لارې", payment_hint: "د تادیې په اړه مستقیم له پلورونکي سره موافقه کوئ.",
+    location: "ځای", condition: "حالت", category: "کټګوري", listed_on: "د ایښودلو نېټه", description: "تشریح", no_description: "تشریح نشته.",
+    listing_gone: "دا وړاندیز نور نشته.", err_whole_number: "مهرباني وکړئ بشپړ عدد ولیکئ.",
+    err_moq_short: "لږ تر لږه فرمایش {n} {unit} دی.", err_stock_short: "یوازې {n} {unit} موجود دي.",
+    shipping: "لېږل", total: "ټولټال", subtotal: "فرعي ټولټال", err_amount: "مهرباني وکړئ یوه اندازه ولیکئ.",
+    bid_placed: "د {amount} وړاندیز ثبت شو", buy_now_done: "لیلام د سمدستي پېرلو په بیه پای ته ورسېد. اوس پېر بشپړ کړئ.",
+    err_cannot_buy: "دا توکی نه شي اخیستل کېدای.", cart_updated: "په ټوکرۍ کې شمېر بدل شو", added_to_cart: "ټوکرۍ ته ورزیات شو", not_available: "نور نشته",
+    cart_empty_title: "ستاسو ټوکرۍ تشه ده", cart_empty_body: "د ثابتې بیې او عمده توکي او هغه لیلامونه چې ګټئ یې دلته راټولېږي.",
+    cart_hint: "د هر پلورونکي لپاره جلا فرمایش ثبتېږي.", order_from: "فرمایش له {name}", fix_cart: "مهرباني وکړئ نښه شوي توکي لرې یا سم کړئ.", checkout_this: "له دې پلورونکي فرمایش",
+    how_payment_works: "تادیه څنګه کېږي",
+    how_payment_body: "مارکت‌هاله لا تادیات نه کوي. له فرمایش وروسته تاسو او پلورونکی د پیغامونو له لارې د تادیې او سپارلو په اړه موافقه کوئ. یوازې هغو پلورونکو ته پیسې ورکړئ چې پر هغوی باور لرئ، او په حواله یا موبایلي پیسو کې یوازې له بشپړې موافقې وروسته.",
+    name_for_delivery: "د سپارلو لپاره نوم", name_for_delivery_hint: "یوازې پلورونکی یې ویني.",
+    address_desc: "پته یا د لیدو ځای", address_desc_hint: "ناحیه، سړک، نږدې نښه – یا یې تش پرېږدئ او د لیدو ځای په پیغامونو کې ټاکئ.",
+    phone_optional: "تلیفون (اختیاري)", phone_hint: "یوازې پلورونکی یې ویني. هر څه د پیغامونو له لارې هم ټاکلی شئ.",
+    payment_method: "د تادیې لاره", no_common_pay: "دا توکي ګډه د تادیې لاره نه لري.",
+    checkout: "پېر بشپړول", back: "شاته", place_order: "ژمن فرمایش ثبتول", sending: "لېږل کېږي …", err_need_name_city: "مهرباني وکړئ نوم او ولایت یا ښار ولیکئ.",
+    order_sent: "فرمایش ولېږل شو", order_number: "د فرمایش شمېره", order_sent_body: "ستاسو فرمایش پلورونکي ته ورسېد.",
+    order_next: "د تادیې او سپارلو په اړه د موافقې لپاره پلورونکي ته پیغام ولېږئ. فرمایش په «زما حساب» ← «پېرودنې» کې پیدا کوئ.", to_my_orders: "زما پېرودنو ته",
+    profile_loading: "ستاسو پروفایل لا پورته کېږي. مهرباني وکړئ لږ وروسته بیا هڅه وکړئ.",
+    ends_at: "پای {date}", type_locked: "د وړاندیز ډول له ایښودلو وروسته نه بدلېږي.", wholesale_needs_pro: "عمده پلور د سوداګرو لپاره دی. خپل حساب په «زما حساب» ← «پروفایل» کې بدل کړئ.",
+    ship_cost_for: "د لېږلو لګښت {zone}", ship_days_for: "د لېږلو موده {zone}", cost: "لګښت", days_placeholder: "ورځې، لکه ۳–۵",
+    sell_safety_short: "ریښتیني نوم، پته، د تلیفون شمېره یا مخونه په وړاندیز کې مه اچوئ.",
+    selling_as: "تاسو د {kind} په توګه له {country} څخه پلورئ (په پروفایل کې د بدلون وړ).",
+    title: "سرلیک", title_hint: "څه دی او څه ځانګړتیا لري؟", currency: "پیسې",
+    buy_now_price: "د سمدستي پېرلو بیه", duration: "موده", price_each: "د هرې دانې بیه", stock_count: "موجود شمېر",
+    unit: "واحد", stock_qty: "موجوده اندازه", tier_prices: "پوړیزې بیې", tier_hint: "لومړی پوړ لږ تر لږه فرمایش دی. نور پوړونه اختیاري دي، له زیات شمېر او ټیټې بیې سره.",
+    min_qty: "لږ تر لږه شمېر", tier_from: "پوړ {n}: له شمېر", price_per_unit: "د هر واحد بیه",
+    payment_methods_hint: "د تادیې کومې لارې منئ؟", delivery: "سپارل", delivery_hint: "وټاکئ چېرته لېږئ او لګښت او موده ولیکئ. د وړیا لېږلو لپاره لګښت تش یا ۰ پرېږدئ.",
+    pickup_possible: "حضوري سپارل ممکن دي", province_hint: "یوازې ولایت یا ښار ټولو ته ښودل کېږي، هېڅکله ستاسو پته نه.",
+    desc_hint: "اندازه، توکی، رنګ، حالت. پرته له پتې یا د تلیفون شمېرې.", photo: "انځور", photo_hint: "له پورته کولو مخکې کوچنی کېږي او ټولو ته ښودل کېږي. مهرباني وکړئ پرته له مخونو.",
+    edit_listing: "وړاندیز سمول", new_listing: "توکی ایښودل", cancel: "لغوه کول", save_changes: "بدلونونه خوندي کول", publish: "خپرول",
+    please_check: "مهرباني وکړئ وګورئ:", v_title: "سرلیک لږ تر لږه ۳ توري", v_start: "پیلیزه بیه لږ تر لږه ۱", v_buynow: "د سمدستي پېرلو بیه له پیلیزې بیې لوړه (یا تشه)",
+    v_price: "بیه له ۰ لوړه", v_stock: "شمېر لږ تر لږه ۱", v_tiers: "پوړیزې بیې بشپړې، له زیات شمېر او ټیټې بیې سره", v_stock_moq: "موجوده اندازه لږ تر لږه د فرمایش د لږ تر لږه اندازې سره برابره",
+    v_pay: "لږ تر لږه د تادیې یوه لاره", v_ship_cost: "د لېږلو سم لګښت", v_delivery: "لږ تر لږه د سپارلو یوه لاره یا حضوري سپارل", v_province: "ولایت", v_city: "ښار",
+    uploading_photo: "انځور پورته کېږي …", saving: "خوندي کېږي …", changes_saved: "بدلونونه خوندي شول", listing_published: "ستاسو وړاندیز اوس ټولو ته ښکاري.",
+    err_login: "مهرباني وکړئ ننوځئ.", err_not_found: "ونه موندل شو.", err_own_bid: "پر خپل لیلام وړاندیز نه شئ کولی.", err_own_item: "دا ستاسو خپل وړاندیز دی.",
+    err_ended: "لیلام دمخه پای ته رسېدلی.", err_min_bid: "ستاسو وړاندیز باید لږ تر لږه {amount} وي.", err_no_buynow: "دا لیلام د سمدستي پېرلو بیه نه لري.",
+    err_has_bids: "سمدستي پېرل نور ممکن نه دي، ځکه چا وړاندیز کړی.", err_wholesale_pro: "عمده پلور یوازې د سوداګرو حسابونو لپاره دی.",
+    err_auction_duration: "د لیلام موده سمه نه ده.", err_fields_locked: "دا معلومات نه بدلېږي.",
+    err_auction_locked: "دا لیلام وړاندیزونه لري یا پای ته رسېدلی او نور د سمولو وړ نه دی.", err_tiers: "پوړیزې بیې سمې نه دي: زیات شمېر او ټیټه بیه، تر ټولو ډېر ۳ پوړونه.",
+    err_stock_moq: "موجوده اندازه باید لږ تر لږه د فرمایش د لږ تر لږه اندازې سره برابره وي.", err_buynow_start: "د سمدستي پېرلو بیه باید له پیلیزې بیې لوړه وي.",
+    err_ship_invalid: "د لېږلو معلومات سم نه دي.", err_ship_none: "مهرباني وکړئ لږ تر لږه د سپارلو یوه لاره یا حضوري سپارل ورکړئ.",
+    err_cart_invalid: "ټوکرۍ تشه یا ناسمه ده.", err_pay_method: "دا د تادیې لاره د «{title}» لپاره نه منل کېږي.",
+    err_rate_limit: "په لنډ وخت کې ډېر کارونه وشول. مهرباني وکړئ لږ صبر وکړئ او بیا هڅه وکړئ.",
+    err_one_seller: "یو فرمایش یوازې د یو پلورونکي توکي لرلی شي.", err_one_currency: "یو فرمایش یوازې یو ډول پیسې لرلی شي.",
+    err_sold: "«{title}» دمخه پلورل شوی.", err_running: "«{title}»: لیلام لا روان دی.", err_not_won: "«{title}»: تاسو دا لیلام نه دی ګټلی.",
+    err_qty: "«{title}»: ناسم شمېر.", err_moq: "«{title}»: لږ تر لږه فرمایش {n} دی.", err_stock: "«{title}»: یوازې {n} موجود دي.",
+    err_no_delivery: "«{title}» دې هېواد ته نه لېږل کېږي.",
+    privacy_title: "محرمیت",
+    privacy_intro: "دلته وینئ چې ستاسو کوم معلومات نور یې ویني او کوم پټ پاتې کېږي.",
+    privacy_public_h: "هغه څه چې نور یې ویني",
+    privacy_public_1: "ستاسو د هټۍ نوم او دا چې شخصي پلورئ که د سوداګر په توګه.",
+    privacy_public_2: "ستاسو وړاندیزونه له انځور، بیې او ولایت یا ښار سره.",
+    privacy_public_3: "په لیلام کې نور وړاندیز کوونکي یوازې لنډ شوی نوم ویني (لکه A***d).",
+    privacy_hidden_h: "هغه څه چې پټ پاتې کېږي",
+    privacy_hidden_1: "ستاسو برېښنالیک او پټنوم.",
+    privacy_hidden_2: "ستاسو په پروفایل کې هېواد او ښار.",
+    privacy_hidden_3: "ستاسو د سپارلو پته او د تلیفون شمېره – یوازې ستاسو د فرمایش پلورونکی یې ویني.",
+    privacy_hidden_4: "په انځورونو کې د ځای معلومات: انځورونه له پورته کولو مخکې بیا خوندي کېږي او د GPS معلومات لرې کېږي.",
+    privacy_limits: "مهرباني وکړئ پام وکړئ: حسابونه، پیغامونه او فرمایشونه د Supabase خدمت په سرورونو کې په فرانکفورت (آلمان) کې ساتل کېږي. چلوونکي له تخنیکي پلوه ورته لاسرسی لري. په پیغامونو کې داسې څه مه لیکئ چې تاسو له خطر سره مخ کړي.",
+    privacy_inclusion: "مارکت‌هاله داسې جوړه شوې چې هغه کسان هم چې نشي کولی یا نه غواړي په ټولنه کې څرګند شي، له کوره په خوندي ډول وپلوري.",
+    profile_privacy: "یوازې ستاسو د هټۍ نوم او د حساب ډول ټولو ته ښکاري. هېواد او ښار یوازې تاسو ته ښکاري او ستاسو د وړاندیزونو لپاره ډیفالټ دي."
+  }
+};
+
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var SUPABASE_URL = "https://vtumfsioubfpxyzqzham.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_zqw79LAhyzGTryYC7Cdrxw_QiOhgzAi";
+  var SITE_URL = location.origin + location.pathname;
+  var LOCAL_KEY = "markthalle-local-v2";
+  var STR = window.MH_STRINGS;
+
+  var CATS = [
+    { id: "handicraft", h: 330 }, { id: "clothing", h: 280 }, { id: "carpets", h: 14 }, { id: "jewelry", h: 45 },
+    { id: "food", h: 85 }, { id: "dryfruit", h: 30 }, { id: "beauty", h: 310 }, { id: "home", h: 140 },
+    { id: "electronics", h: 205 }, { id: "books", h: 255 }, { id: "other", h: 190 }
+  ];
+  var PROVINCES = [
+    ["Badakhshan", "بدخشان"], ["Badghis", "بادغیس"], ["Baghlan", "بغلان"], ["Balkh", "بلخ"], ["Bamyan", "بامیان"], ["Daykundi", "دایکندی"],
+    ["Farah", "فراه"], ["Faryab", "فاریاب"], ["Ghazni", "غزنی"], ["Ghor", "غور"], ["Helmand", "هلمند"], ["Herat", "هرات"],
+    ["Jowzjan", "جوزجان"], ["Kabul", "کابل"], ["Kandahar", "قندهار"], ["Kapisa", "کاپیسا"], ["Khost", "خوست"], ["Kunar", "کنر"],
+    ["Kunduz", "کندز"], ["Laghman", "لغمان"], ["Logar", "لوگر"], ["Nangarhar", "ننگرهار"], ["Nimruz", "نیمروز"], ["Nuristan", "نورستان"],
+    ["Paktia", "پکتیا"], ["Paktika", "پکتیکا"], ["Panjshir", "پنجشیر"], ["Parwan", "پروان"], ["Samangan", "سمنگان"], ["Sar-e Pol", "سرپل"],
+    ["Takhar", "تخار"], ["Uruzgan", "ارزگان"], ["Wardak", "میدان وردک"], ["Zabul", "زابل"]
+  ];
+  var COUNTRY_CODES = ["AF", "IR", "PK", "TJ", "UZ", "TM", "TR", "AE", "SA", "QA", "IN", "DE", "AT", "NL", "SE", "DK", "FR", "BE", "IT", "ES", "GB", "NO", "CH", "US", "CA", "AU"];
+  var EU = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
+  var ZONES = ["inland", "eu", "welt"];
+  var CONDS = ["new", "like_new", "good", "acceptable", "defect"];
+  var UNITS = ["piece", "pack", "box", "dozen", "kg", "liter", "meter"];
+  var CURRENCIES = ["AFN", "USD", "EUR"];
+  var PAYS = ["cash", "mobile", "hawala"];
+  var MIN = 60000;
+  var LANGS = [["fa", "دری"], ["ps", "پښتو"], ["en", "English"]];
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Language ---------- */
+  var local = loadLocal();
+  var lang = local.lang;
+  function defaultLang() {
+    var n = (navigator.language || "").toLowerCase();
+    if (n.indexOf("ps") === 0) return "ps";
+    return "fa";
+  }
+  function t(key, vars) {
+    var s = (STR[lang] && STR[lang][key]) || STR.en[key] || key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.split("{" + k + "}").join(vars[k]); });
+    return s;
+  }
+  function locale() { return lang === "en" ? "en-GB" : lang + "-AF"; }
+  var nf, dn;
+  function setupIntl() {
+    try { nf = new Intl.NumberFormat(locale()); } catch (e) { nf = new Intl.NumberFormat("en"); }
+    try { dn = new Intl.DisplayNames([locale()], { type: "region" }); } catch (e) { dn = null; }
+  }
+  function applyLang() {
+    document.documentElement.lang = lang === "fa" ? "fa-AF" : lang === "ps" ? "ps-AF" : "en";
+    document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+    setupIntl();
+    document.title = t("site_name");
+    document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.getAttribute("data-t")); });
+    document.querySelectorAll("[data-tp]").forEach(function (el) { el.setAttribute("placeholder", t(el.getAttribute("data-tp"))); });
+    document.querySelectorAll("[data-ta]").forEach(function (el) { el.setAttribute("aria-label", t(el.getAttribute("data-ta"))); });
+  }
+
+  if (!window.supabase || !window.supabase.createClient) {
+    applyLang();
+    $("main").innerHTML = '<div class="empty"><b>' + t("load_fail_title") + "</b>" + t("load_fail_body") + "</div>";
+    return;
+  }
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  /* ---------- State ---------- */
+  var uid = null, me = null, userEmail = "";
+  var listings = [], watchSet = {}, convs = [], purchases = [], sales = [];
+  var loaded = false, loadError = "";
+  var ui = { q: "", cat: "", type: "all", seller: "all", origin: "all", deliverOnly: true, sort: "new", view: "browse", tab: "listings" };
+
+  function loadLocal() {
+    var d = { cart: [], shipTo: "AF", lang: "" };
+    try { var r = JSON.parse(localStorage.getItem(LOCAL_KEY) || "null"); if (r) { d.cart = Array.isArray(r.cart) ? r.cart : []; d.shipTo = r.shipTo || "AF"; d.lang = r.lang || ""; } } catch (e) {}
+    if (["fa", "ps", "en"].indexOf(d.lang) < 0) d.lang = defaultLang();
+    return d;
+  }
+  function saveLocal() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); } catch (e) {} }
+
+  /* ---------- Helpers ---------- */
+  function money(v, cur) {
+    try { return new Intl.NumberFormat(locale(), { style: "currency", currency: cur || "AFN", maximumFractionDigits: cur === "AFN" ? 0 : 2 }).format(v); }
+    catch (e) { return num(v) + " " + (cur || ""); }
+  }
+  function num(v) { return nf.format(v); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function catOf(id) { for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i]; return CATS[CATS.length - 1]; }
+  function cname(code) { if (!code) return ""; try { return (dn && dn.of(code)) || code; } catch (e) { return code; } }
+  function provName(p) { for (var i = 0; i < PROVINCES.length; i++) if (PROVINCES[i][0] === p) return lang === "en" ? PROVINCES[i][0] : PROVINCES[i][1]; return p; }
+  function sep() { return lang === "en" ? ", " : "، "; }
+  function place(l) { return (l.country === "AF" ? provName(l.loc) : l.loc) + sep() + cname(l.country); }
+  function byId(id) { for (var i = 0; i < listings.length; i++) if (listings[i].id === id) return listings[i]; return null; }
+  function parseNum(v) {
+    var s = String(v == null ? "" : v).trim()
+      .replace(/[۰-۹]/g, function (d) { return String(d.charCodeAt(0) - 0x06F0); })
+      .replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 0x0660); })
+      .replace(/٫/g, ".").replace(/٬/g, "").replace(",", ".");
+    return s === "" ? NaN : Number(s);
+  }
+  function round2(v) { return Math.round(v * 100) / 100; }
+  function fmtDate(ts) { try { return new Date(ts).toLocaleString(locale(), { dateStyle: "medium", timeStyle: "short" }); } catch (e) { return new Date(ts).toLocaleString(); } }
+  function fmtDay(ts) { try { return new Date(ts).toLocaleDateString(locale()); } catch (e) { return new Date(ts).toLocaleDateString(); } }
+  function mask(n) { n = String(n || "?"); return n.length <= 2 ? n[0] + "***" : n[0] + "***" + n[n.length - 1]; }
+  function errMsg(e) {
+    var m = (e && (e.message || e.error_description)) || String(e || "");
+    var mh = /MH:([a-z_]+)(?:\|([^|]*))?(?:\|([^|]*))?/.exec(m);
+    if (mh) {
+      var c = mh[1], a = mh[2], b = mh[3];
+      if (c === "min_bid") return t("err_min_bid", { amount: money(Number(a), b) });
+      return t("err_" + c, { title: a || "", n: b ? num(Number(b)) : "" });
+    }
+    if (/Invalid login credentials/i.test(m)) return t("err_credentials");
+    if (/Email not confirmed/i.test(m)) return t("err_email_unconfirmed");
+    if (/already registered/i.test(m)) return t("err_registered");
+    if (/rate limit|too many/i.test(m)) return t("err_rate_limit");
+    if (/Password should be at least/i.test(m)) return t("err_password_short");
+    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return t("err_network");
+    if (/permission denied|JWT|not authenticated/i.test(m)) return t("err_login");
+    if (/payload too large|exceeded the maximum/i.test(m)) return t("err_image_size");
+    return m || t("err_unknown");
+  }
+  var HEART_PATH = '<path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.4 3.5 4.3 6.7-1.7 4.7-9.2 9.3-9.2 9.3z"/>';
+  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true">' + HEART_PATH + "</svg>";
+
+  /* ---------- Data ---------- */
+  function mapListing(r) {
+    var bids = (r.bids || []).map(function (b) {
+      return { id: b.id, whoId: b.bidder_id, who: b.bidder ? b.bidder.display_name : "?", amount: Number(b.amount), t: Date.parse(b.created_at), buyNow: b.is_buy_now };
+    }).sort(function (a, b) { return a.amount - b.amount || a.t - b.t; });
+    return {
+      id: r.id, sellerId: r.seller_id, seller: r.seller ? r.seller.display_name : "?", sellerType: r.seller_type,
+      type: r.type, title: r.title, cat: r.cat, cond: r.cond, desc: r.descr, country: r.country, loc: r.loc, cur: r.currency, pays: r.pay_methods || ["cash"],
+      price: r.price == null ? null : Number(r.price), stock: r.stock, unit: r.unit,
+      tiers: (r.tiers || null) && r.tiers.map(function (x) { return { min: Number(x.min), price: Number(x.price) }; }),
+      start: r.start_price == null ? null : Number(r.start_price), buyNow: r.buy_now == null ? 0 : Number(r.buy_now),
+      endsAt: r.ends_at ? Date.parse(r.ends_at) : null, ship: r.ship || {}, pickup: r.pickup, img: r.img_url, sold: r.sold,
+      createdAt: Date.parse(r.created_at), bids: bids
+    };
+  }
+  function loadListings() {
+    return sb.from("listings")
+      .select("*, seller:profiles!listings_seller_id_fkey(display_name), bids(id,bidder_id,amount,is_buy_now,created_at,bidder:profiles(display_name))")
+      .order("created_at", { ascending: false }).limit(500)
+      .then(function (res) {
+        if (res.error) throw res.error;
+        listings = res.data.map(mapListing); loaded = true; loadError = "";
+      });
+  }
+  function loadMine() {
+    if (!uid) { me = null; watchSet = {}; convs = []; purchases = []; sales = []; return Promise.resolve(); }
+    return Promise.all([
+      sb.rpc("my_profile"),
+      sb.from("watch").select("listing_id"),
+      sb.from("conversations").select("*, buyer:profiles!conversations_buyer_id_fkey(display_name), seller:profiles!conversations_seller_id_fkey(display_name)").order("last_at", { ascending: false }),
+      sb.from("orders").select("*, order_items(*), seller:profiles!orders_seller_id_fkey(display_name)").eq("buyer_id", uid).order("created_at", { ascending: false }),
+      sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false })
+    ]).then(function (r) {
+      for (var i = 0; i < r.length; i++) if (r[i].error) throw r[i].error;
+      me = r[0].data;
+      watchSet = {}; r[1].data.forEach(function (w) { watchSet[w.listing_id] = true; });
+      convs = r[2].data; purchases = r[3].data; sales = r[4].data;
+    });
+  }
+  function refresh() {
+    return Promise.resolve()
+      .then(function () { return Promise.all([loadListings(), loadMine()]); })
+      .catch(function (e) { loadError = errMsg(e); })
+      .then(render);
+  }
+  function isUnread(c) {
+    var mine = c.buyer_id === uid ? c.buyer_read_at : c.seller_read_at;
+    return Date.parse(c.last_at) > Date.parse(mine) + 500;
+  }
+  function unreadCount() { return convs.filter(isUnread).length; }
+
+  /* ---------- Rules ---------- */
+  function zoneOf(from, to) { if (from === to) return "inland"; if (EU.indexOf(from) > -1 && EU.indexOf(to) > -1) return "eu"; return "welt"; }
+  function shipFor(l, to) {
+    var zn = zoneOf(l.country, to), s = l.ship[zn];
+    if (s && typeof s === "object") return { zone: zn, cost: Number(s.c), days: s.d, pickup: false };
+    if (zn === "inland" && l.pickup) return { zone: zn, cost: 0, days: null, pickup: true };
+    return null;
+  }
+  function customs(l, to) { return zoneOf(l.country, to) === "welt"; }
+  function shipShort(l, to) {
+    var s = shipFor(l, to);
+    if (!s) return t("no_delivery_to", { country: cname(to) });
+    if (s.pickup) return t("pickup_only");
+    return (s.cost === 0 ? t("free_shipping") : t("shipping_x", { amount: money(s.cost, l.cur) })) + (s.days ? " · " + t("days_x", { d: s.days }) : "");
+  }
+  function isMine(l) { return !!uid && l.sellerId === uid; }
+  function sellerName(l) { return isMine(l) ? t("you") : l.seller; }
+  function topBid(l) { return l.bids.length ? l.bids[l.bids.length - 1] : null; }
+  function ended(l) { return l.type === "auction" && Date.now() >= l.endsAt; }
+  function step(v, cur) { return cur === "AFN" ? (v < 1000 ? 10 : v < 10000 ? 50 : 100) : (v < 50 ? 1 : v < 500 ? 5 : 10); }
+  function minNext(l) { var tb = topBid(l); return tb ? tb.amount + step(tb.amount, l.cur) : l.start; }
+  function iWon(l) { var tb = topBid(l); return ended(l) && tb && tb.whoId === uid; }
+  function buyNowOpen(l) { return l.type === "auction" && l.buyNow > 0 && !l.bids.length && !ended(l) && !l.sold; }
+  function moq(l) { return l.type === "wholesale" ? l.tiers[0].min : 1; }
+  function unitPrice(l, qty) {
+    if (l.type === "auction") { var tb = topBid(l); return tb ? tb.amount : l.start; }
+    if (l.type === "fixed") return l.price;
+    var p = l.tiers[0].price;
+    l.tiers.forEach(function (x) { if (qty >= x.min) p = x.price; });
+    return p;
+  }
+  function fromPrice(l) { return l.type === "wholesale" ? l.tiers[l.tiers.length - 1].price : unitPrice(l, 1); }
+  function inStock(l) { return l.type === "auction" ? !l.sold : l.stock >= moq(l); }
+  function canBuy(l) {
+    if (isMine(l) || !inStock(l)) return false;
+    if (l.type === "auction") return iWon(l);
+    return true;
+  }
+  function canEdit(l) { return isMine(l) && (l.type !== "auction" || (!l.sold && !l.bids.length && !ended(l))); }
+  function canDelete(l) { return isMine(l) && !l.bids.length; }
+  function unitName(u) { return u ? t("unit_" + u) : t("unit_piece"); }
+
+  function needLogin(msgKey) {
+    if (uid) return false;
+    openAuth("login", t(msgKey || "login_needed"));
+    return true;
+  }
+
+  /* ---------- Small views ---------- */
+  function left(ms) {
+    if (ms <= 0) return t("ended");
+    var s = Math.floor(ms / 1000), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+    if (d > 0) return t("left_dh", { d: num(d), h: num(h) });
+    if (h > 0) return t("left_hm", { h: num(h), m: num(m) });
+    return t("left_ms", { m: num(m), s: num(sec) });
+  }
+  function leftSpan(l) {
+    var ms = l.endsAt - Date.now();
+    return '<span class="left ' + (ms <= 0 ? "over" : ms < 10 * MIN ? "soon" : "") + '" data-end="' + l.endsAt + '">' + left(ms) + "</span>";
+  }
+  function imgInner(l, withLabel) {
+    var c = catOf(l.cat);
+    if (l.img) return '<img src="' + esc(l.img) + '" alt="" loading="lazy" decoding="async">';
+    return '<div class="ph" style="--h:' + c.h + '"><div>' + (withLabel ? "<small>" + esc(t("cat_" + c.id)) + "</small>" : "") + "</div></div>";
+  }
+  function thumb(l, cls) { return '<div class="thumb ' + (cls || "") + '">' + imgInner(l, true) + "</div>"; }
+  function typeTag(l) { return '<span class="tag ' + (l.type === "auction" ? "auc" : l.type === "fixed" ? "fix" : "whs") + '">' + t("type_" + l.type) + "</span>"; }
+  function tags(l) {
+    var s = "";
+    if (!inStock(l)) s += '<span class="tag sold">' + t(l.type === "auction" ? "sold" : "sold_out") + "</span>";
+    return s + typeTag(l);
+  }
+  function whoBadge(l) {
+    return '<span class="who' + (l.sellerType === "gewerbe" ? " pro" : "") + '">' + t(l.sellerType === "gewerbe" ? "seller_pro" : "seller_private") + "</span>";
+  }
+  function countryOpts(sel) { return COUNTRY_CODES.map(function (c) { return '<option value="' + c + '"' + (c === sel ? " selected" : "") + ">" + esc(cname(c)) + "</option>"; }).join(""); }
+  function provOpts(sel) { return PROVINCES.map(function (p) { return '<option value="' + esc(p[0]) + '"' + (p[0] === sel ? " selected" : "") + ">" + esc(lang === "en" ? p[0] : p[1]) + "</option>"; }).join(""); }
+  function payList(arr) { return arr.map(function (p) { return t("pay_" + p); }).join(sep()); }
+
+  /* ---------- Header ---------- */
+  function renderHeader() {
+    var opts = '<option value="">' + esc(t("all_categories")) + "</option>";
+    var chips = '<button class="chip" type="button" data-cat="" aria-pressed="' + (ui.cat === "") + '">' + esc(t("all")) + "</button>";
+    CATS.forEach(function (c) {
+      opts += '<option value="' + c.id + '">' + esc(t("cat_" + c.id)) + "</option>";
+      chips += '<button class="chip" type="button" data-cat="' + c.id + '" aria-pressed="' + (ui.cat === c.id) + '">' + esc(t("cat_" + c.id)) + "</button>";
+    });
+    $("catSel").innerHTML = opts; $("catSel").value = ui.cat;
+    $("cats").innerHTML = chips;
+    $("shipTo").innerHTML = countryOpts(local.shipTo);
+    $("langSel").innerHTML = LANGS.map(function (l) { return '<option value="' + l[0] + '"' + (l[0] === lang ? " selected" : "") + ">" + l[1] + "</option>"; }).join("");
+  }
+  $("cats").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-cat]"); if (!b) return;
+    ui.cat = b.getAttribute("data-cat"); ui.view = "browse"; renderHeader(); render();
+  });
+  $("catSel").addEventListener("change", function () { ui.cat = this.value; ui.view = "browse"; renderHeader(); render(); });
+  $("shipTo").addEventListener("change", function () { local.shipTo = this.value; saveLocal(); render(); toast(t("ship_to_set", { country: cname(local.shipTo) })); });
+  $("langSel").addEventListener("change", function () { lang = this.value; local.lang = lang; saveLocal(); if (!$("sheet").hidden) closeSheet(); applyLang(); renderHeader(); render(); });
+  $("q").addEventListener("input", function () { ui.q = this.value; ui.view = "browse"; render(); });
+  $("searchForm").addEventListener("submit", function (e) { e.preventDefault(); ui.view = "browse"; render(); });
+  $("logo").addEventListener("click", function () {
+    ui.q = ""; ui.cat = ""; ui.type = "all"; ui.seller = "all"; ui.origin = "all"; ui.deliverOnly = true; ui.sort = "new"; ui.view = "browse";
+    $("q").value = ""; renderHeader(); render();
+  });
+  $("accBtn").addEventListener("click", function () { if (needLogin()) return; ui.view = "account"; render(); });
+  $("cartBtn").addEventListener("click", function () { openCart(); });
+  $("sellBtn").addEventListener("click", function () { if (needLogin("login_to_sell")) return; openSell(); });
+  $("safetyBtn").addEventListener("click", function () { openSafety(); });
+
+  /* ---------- Browse ---------- */
+  function filtered() {
+    var q = ui.q.trim().toLowerCase(), hidden = 0;
+    var list = listings.filter(function (l) {
+      if (ui.cat && l.cat !== ui.cat) return false;
+      if (ui.type !== "all" && l.type !== ui.type) return false;
+      if (ui.seller !== "all" && l.sellerType !== ui.seller) return false;
+      if (ui.origin === "inland" && l.country !== local.shipTo) return false;
+      if (ui.origin === "abroad" && l.country === local.shipTo) return false;
+      if (q && (l.title + " " + l.desc + " " + l.loc + " " + provName(l.loc) + " " + l.seller + " " + cname(l.country)).toLowerCase().indexOf(q) === -1) return false;
+      if (ui.deliverOnly && !shipFor(l, local.shipTo) && !isMine(l)) { hidden++; return false; }
+      return true;
+    });
+    var now = Date.now();
+    function rank(l) { return !inStock(l) || ended(l) ? 1 : 0; }
+    list.sort(function (a, b) {
+      var r = rank(a) - rank(b); if (r) return r;
+      if (ui.sort === "asc" && a.cur === b.cur) return fromPrice(a) - fromPrice(b);
+      if (ui.sort === "desc" && a.cur === b.cur) return fromPrice(b) - fromPrice(a);
+      if (ui.sort === "ending") {
+        var ea = a.type === "auction" ? a.endsAt - now : Infinity, eb = b.type === "auction" ? b.endsAt - now : Infinity;
+        return ea - eb;
+      }
+      if ((ui.sort === "asc" || ui.sort === "desc") && a.cur !== b.cur) return a.cur < b.cur ? -1 : 1;
+      return b.createdAt - a.createdAt;
+    });
+    return { list: list, hidden: hidden };
+  }
+  function cardHTML(l) {
+    var priceHTML, note;
+    if (l.type === "auction") {
+      priceHTML = money(unitPrice(l, 1), l.cur);
+      note = l.bids.length ? t("n_bids", { n: num(l.bids.length) }) : t("start_price");
+      if (buyNowOpen(l)) note += " · " + t("buy_now_x", { amount: money(l.buyNow, l.cur) });
+    } else if (l.type === "fixed") {
+      priceHTML = money(l.price, l.cur);
+      note = l.stock > 5 ? t("n_in_stock", { n: num(l.stock) }) : l.stock > 0 ? t("only_n_left", { n: num(l.stock) }) : t("sold_out");
+    } else {
+      priceHTML = "<small>" + t("from") + " </small>" + money(fromPrice(l), l.cur) + "<small> / " + esc(unitName(l.unit)) + "</small>";
+      note = t("moq_x", { n: num(moq(l)), unit: unitName(l.unit) });
+    }
+    var s = shipFor(l, local.shipTo), w = !!watchSet[l.id];
+    return '<article class="card' + (s || isMine(l) ? "" : " nodeliver") + '"><div class="thumb">' + imgInner(l, true) + '<div class="tags">' + tags(l) + "</div>" +
+      (isMine(l) ? "" : '<button class="watch" type="button" data-watch="' + l.id + '" aria-pressed="' + w + '" aria-label="' + esc(t(w ? "unwatch" : "watch")) + '">' + HEART + "</button>") + "</div>" +
+      '<div class="card-b"><h3 dir="auto"><button type="button" data-open="' + l.id + '">' + esc(l.title) + "</button></h3>" +
+      '<div class="row"><span class="price">' + priceHTML + "</span>" + (l.type === "auction" ? leftSpan(l) : "") + "</div>" +
+      '<div class="note">' + note + "</div>" +
+      '<div class="shipnote' + (s ? "" : " no") + '">' + esc(shipShort(l, local.shipTo)) + (s && customs(l, local.shipTo) ? " · " + t("customs_short") : "") + "</div>" +
+      '<div class="meta">' + whoBadge(l) + "<span>" + esc(place(l)) + "</span></div></div></article>";
+  }
+  function selHTML(id, label, cur, opts) {
+    return '<select class="sel" id="' + id + '" aria-label="' + esc(label) + '">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (cur === o[0] ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>";
+  }
+  function renderBrowse() {
+    if (!loaded) {
+      $("main").innerHTML = loadError
+        ? '<div class="empty"><b>' + t("load_listings_fail") + "</b>" + esc(loadError) + '<div style="margin-top:12px"><button class="btn" type="button" id="retry">' + t("retry") + "</button></div></div>"
+        : '<div class="empty"><b>' + t("loading") + "</b></div>";
+      if ($("retry")) $("retry").addEventListener("click", refresh);
+      return;
+    }
+    var f = filtered(), list = f.list;
+    var title = ui.q.trim() ? t("results_for", { q: esc(ui.q.trim()) }) : ui.cat ? esc(t("cat_" + ui.cat)) : t("all_listings");
+    var h = "";
+    if (!uid && !ui.q && !ui.cat) {
+      h += '<section class="hero"><div><h2>' + t("hero_title") + "</h2><p>" + t("hero_body") + '</p></div><div class="hero-acts"><button class="btn primary" type="button" id="heroSell">' + t("hero_cta_sell") + "</button></div></section>";
+    }
+    h += '<div class="bar"><div><h1>' + title + '</h1><div class="sub">' + t("n_listings", { n: num(list.length) }) + " · " + t("delivery_to_x", { country: esc(cname(local.shipTo)) }) + "</div></div>" +
+      '<div class="controls">' +
+      selHTML("fType", t("listing_type"), ui.type, [["all", t("all_types")], ["auction", t("type_auction")], ["fixed", t("type_fixed")], ["wholesale", t("type_wholesale")]]) +
+      selHTML("fSeller", t("seller"), ui.seller, [["all", t("private_and_pro")], ["privat", t("only_private")], ["gewerbe", t("only_pro")]]) +
+      selHTML("fOrigin", t("origin"), ui.origin, [["all", t("home_and_abroad")], ["inland", t("only_from_x", { country: cname(local.shipTo) })], ["abroad", t("only_abroad")]]) +
+      selHTML("sort", t("sort"), ui.sort, [["new", t("sort_new")], ["ending", t("sort_ending")], ["asc", t("sort_asc")], ["desc", t("sort_desc")]]) +
+      '<label class="check"><input type="checkbox" id="fDeliver"' + (ui.deliverOnly ? " checked" : "") + "> " + t("only_deliverable") + "</label></div></div>";
+    if (loadError) h += '<div class="hiddeninfo" style="color:var(--warn)">' + t("refresh_failed") + " " + esc(loadError) + "</div>";
+    if (f.hidden) h += '<div class="hiddeninfo">' + t("n_hidden", { n: num(f.hidden), country: esc(cname(local.shipTo)) }) + ' <button class="linkbtn" type="button" id="showAll">' + t("show_anyway") + "</button></div>";
+    if (!listings.length) {
+      h += '<div class="empty"><b>' + t("empty_title") + "</b>" + t("empty_body") + '<div style="margin-top:14px"><button class="btn primary" type="button" id="emptySell">' + t("empty_cta") + "</button></div></div>";
+    } else if (!list.length) {
+      h += '<div class="empty"><b>' + t("nothing_found") + "</b>" + t("nothing_found_body") + "</div>";
+    } else h += '<div class="grid">' + list.map(cardHTML).join("") + "</div>";
+    $("main").innerHTML = h;
+    $("fType").addEventListener("change", function () { ui.type = this.value; render(); });
+    $("fSeller").addEventListener("change", function () { ui.seller = this.value; render(); });
+    $("fOrigin").addEventListener("change", function () { ui.origin = this.value; render(); });
+    $("sort").addEventListener("change", function () { ui.sort = this.value; render(); });
+    $("fDeliver").addEventListener("change", function () { ui.deliverOnly = this.checked; render(); });
+    if ($("showAll")) $("showAll").addEventListener("click", function () { ui.deliverOnly = false; render(); });
+    if ($("emptySell")) $("emptySell").addEventListener("click", function () { $("sellBtn").click(); });
+    if ($("heroSell")) $("heroSell").addEventListener("click", function () { if (needLogin("login_to_sell")) return; openSell(); });
+  }
+
+  function toggleWatch(id) {
+    if (needLogin("login_to_watch")) return Promise.resolve();
+    var on = !!watchSet[id];
+    var p = on ? sb.from("watch").delete().eq("user_id", uid).eq("listing_id", id) : sb.from("watch").insert({ listing_id: id });
+    return p.then(function (res) {
+      if (res.error) throw res.error;
+      if (on) delete watchSet[id]; else watchSet[id] = true;
+      toast(t(on ? "unwatched" : "watched"));
+      render();
+    }).catch(function (e) { toast(errMsg(e)); });
+  }
+
+  $("main").addEventListener("click", function (e) {
+    var wb = e.target.closest("[data-watch]"); if (wb) { toggleWatch(wb.getAttribute("data-watch")); return; }
+    var ed = e.target.closest("[data-edit]"); if (ed) { openSell(ed.getAttribute("data-edit")); return; }
+    var o = e.target.closest("[data-open]"); if (o) { openDetail(o.getAttribute("data-open")); return; }
+    var tab = e.target.closest("[data-tab]"); if (tab) { ui.tab = tab.getAttribute("data-tab"); render(); return; }
+    var add = e.target.closest("[data-add]"); if (add) { addToCart(add.getAttribute("data-add"), 1); return; }
+    var cv = e.target.closest("[data-conv]"); if (cv) { openConversation(cv.getAttribute("data-conv")); return; }
+    var oc = e.target.closest("[data-order-chat]");
+    if (oc) {
+      oc.disabled = true;
+      sb.rpc("order_conversation", { p_order: oc.getAttribute("data-order-chat") }).then(function (r) {
+        if (r.error) throw r.error; oc.disabled = false; return loadMine().then(function () { openConversation(r.data); });
+      }).catch(function (err) { oc.disabled = false; toast(errMsg(err)); });
+      return;
+    }
+    var st = e.target.closest("[data-status]");
+    if (st) {
+      st.disabled = true;
+      sb.rpc("set_item_status", { p_item: Number(st.getAttribute("data-item")), p_status: st.getAttribute("data-status") })
+        .then(function (r) { if (r.error) throw r.error; toast(t("status_saved")); return refresh(); })
+        .catch(function (err) { st.disabled = false; toast(errMsg(err)); });
+      return;
+    }
+    if (e.target.id === "logoutBtn") {
+      sb.auth.signOut().then(function () { ui.view = "browse"; local.cart = []; saveLocal(); toast(t("logged_out")); });
+      return;
+    }
+    var del = e.target.closest("[data-del]");
+    if (del) {
+      if (del.getAttribute("data-confirm") !== "1") { del.setAttribute("data-confirm", "1"); del.textContent = t("confirm_delete"); return; }
+      del.disabled = true;
+      var lid = del.getAttribute("data-del");
+      sb.from("listings").delete().eq("id", lid).select("id").then(function (r) {
+        if (r.error) throw r.error;
+        if (!r.data.length) throw new Error(t("err_delete"));
+        local.cart = local.cart.filter(function (x) { return x.id !== lid; }); saveLocal();
+        toast(t("deleted")); return refresh();
+      }).catch(function (err) { del.disabled = false; toast(errMsg(err)); });
+    }
+  });
+
+  /* ---------- Account ---------- */
+  function liRow(l, status, acts) {
+    return '<div class="li"><div class="thumb">' + imgInner(l, false) + '</div><div class="li-b"><h4 dir="auto"><button type="button" data-open="' + l.id + '">' + esc(l.title) + "</button></h4>" +
+      '<div class="note">' + status + '</div></div><div class="li-acts">' + acts + "</div></div>";
+  }
+  function tabBtn(id, label) { return '<button type="button" role="tab" data-tab="' + id + '" aria-selected="' + (ui.tab === id) + '">' + label + "</button>"; }
+  function orderAddr(o) { return esc(o.name) + sep() + (o.address ? esc(o.address) + sep() : "") + esc(o.country === "AF" ? provName(o.city) : o.city) + sep() + esc(cname(o.country)); }
+  function itemsLine(o) {
+    return (o.order_items || []).map(function (i) { return (i.qty > 1 ? num(i.qty) + " × " : "") + esc(i.title) + " (" + t("status_" + i.status) + ")"; }).join(" · ");
+  }
+  function renderAccount() {
+    if (!uid || !me) { $("main").innerHTML = '<div class="empty"><b>' + t("loading") + "</b></div>"; return; }
+    var mine = listings.filter(isMine);
+    var bidOn = listings.filter(function (l) { return l.bids.some(function (b) { return b.whoId === uid; }); });
+    var wl = Object.keys(watchSet).map(byId).filter(Boolean);
+    var openSales = sales.filter(function (o) { return (o.order_items || []).some(function (i) { return i.status === "offen"; }); }).length;
+    var unread = unreadCount();
+    var h = '<div class="bar"><div><h1>' + t("my_area") + '</h1><div class="sub">' + esc(me.display_name) + " · " + t(me.seller_type === "gewerbe" ? "account_pro" : "account_private") + ' · <span dir="ltr">' + esc(userEmail) + "</span></div></div>" +
+      '<div class="controls"><button class="btn" type="button" id="logoutBtn">' + t("logout") + "</button></div></div>" +
+      '<div class="tabs" role="tablist">' +
+      tabBtn("listings", t("tab_listings", { n: num(mine.length) })) +
+      tabBtn("messages", t("tab_messages") + (unread ? ' <span class="count">' + num(unread) + "</span>" : "")) +
+      tabBtn("sales", t("tab_sales") + (openSales ? ' <span class="count">' + num(openSales) + "</span>" : "")) +
+      tabBtn("orders", t("tab_orders", { n: num(purchases.length) })) + tabBtn("bids", t("tab_bids", { n: num(bidOn.length) })) +
+      tabBtn("watch", t("tab_watch", { n: num(wl.length) })) + tabBtn("profile", t("tab_profile")) + "</div>";
+
+    if (ui.tab === "listings") {
+      if (!mine.length) h += '<div class="empty"><b>' + t("no_listings_title") + "</b>" + t("no_listings_body") + "</div>";
+      else h += '<div class="list">' + mine.map(function (l) {
+        var st = t("type_" + l.type) + " · ";
+        if (l.type === "auction") {
+          if (l.sold) st += '<span class="status ok">' + t("sold_for", { amount: money(unitPrice(l, 1), l.cur) }) + "</span>";
+          else if (ended(l)) st += l.bids.length ? '<span class="status ok">' + t("auction_won_by", { amount: money(unitPrice(l, 1), l.cur), who: esc(topBid(l).who) }) + "</span>" : '<span class="status">' + t("ended_no_bids") + "</span>";
+          else st += money(unitPrice(l, 1), l.cur) + " · " + t("n_bids", { n: num(l.bids.length) }) + " · " + leftSpan(l);
+        } else if (l.type === "fixed") st += money(l.price, l.cur) + " · " + (l.stock > 0 ? t("n_in_stock", { n: num(l.stock) }) : '<span class="status warn">' + t("sold_out") + "</span>");
+        else st += t("from") + " " + money(fromPrice(l), l.cur) + " / " + esc(unitName(l.unit)) + " · " + t("n_in_stock", { n: num(l.stock) });
+        var acts = (canEdit(l) ? '<button class="btn sm" type="button" data-edit="' + l.id + '">' + t("edit") + "</button>" : "") +
+          (canDelete(l) ? '<button class="btn sm danger" type="button" data-del="' + l.id + '">' + t("delete") + "</button>" : "");
+        return liRow(l, st, acts);
+      }).join("") + "</div>";
+    } else if (ui.tab === "messages") {
+      if (!convs.length) h += '<div class="empty"><b>' + t("no_messages_title") + "</b>" + t("no_messages_body") + "</div>";
+      else h += '<div class="list">' + convs.map(function (c) {
+        var other = c.buyer_id === uid ? (c.seller ? c.seller.display_name : "?") : (c.buyer ? c.buyer.display_name : "?");
+        return '<div class="li plain"><div class="li-b"><h4 dir="auto"><button type="button" data-conv="' + c.id + '">' + esc(c.title) + "</button></h4>" +
+          '<div class="note">' + t(c.buyer_id === uid ? "conv_with_seller" : "conv_with_buyer", { name: esc(other) }) + " · " + fmtDate(c.last_at) + "</div></div>" +
+          '<div class="li-acts">' + (isUnread(c) ? '<span class="tag auc">' + t("new_badge") + "</span>" : "") + '<button class="btn sm" type="button" data-conv="' + c.id + '">' + t("open") + "</button></div></div>";
+      }).join("") + "</div>";
+    } else if (ui.tab === "sales") {
+      if (!sales.length) h += '<div class="empty"><b>' + t("no_sales_title") + "</b>" + t("no_sales_body") + "</div>";
+      else h += '<p class="note" style="margin:0 0 10px">' + t("sales_hint") + '</p><div class="list">' + sales.map(function (o) {
+        var items = (o.order_items || []).map(function (it) {
+          var btn = it.status === "offen" ? '<button class="btn sm" type="button" data-status="' + (it.pickup ? "abgeholt" : "versendet") + '" data-item="' + it.id + '">' + t(it.pickup ? "mark_picked_up" : "mark_shipped") + "</button>" : "";
+          return '<div class="row itemrow"><span class="note">' + num(it.qty) + " × " + esc(it.title) + " · " + money(it.unit_price, o.currency) + (it.pickup ? " · " + t("pickup") : " · " + t("shipping_x", { amount: money(it.ship_cost, o.currency) })) + '</span><span class="row" style="gap:6px"><span class="tag ' + (it.status === "offen" ? "auc" : "fix") + '">' + t("status_" + it.status) + "</span>" + btn + "</span></div>";
+        }).join("");
+        return '<div class="li plain"><div class="li-b"><h4>' + t("order_no", { no: '<span dir="ltr">' + esc(o.no) + "</span>" }) + " · " + money(o.total, o.currency) + "</h4>" +
+          '<div class="note">' + fmtDate(o.created_at) + " · " + t("buyer_x", { name: esc(o.buyer ? o.buyer.display_name : "") }) + " · " + t("payment_x", { method: t("pay_" + o.pay_method) }) + "</div>" +
+          '<div class="note">' + t("deliver_to") + " " + orderAddr(o) + (o.phone ? " · " + t("phone") + ': <b dir="ltr" style="user-select:all">' + esc(o.phone) + "</b>" : "") + "</div>" + items + "</div>" +
+          '<div class="li-acts"><button class="btn sm b2b" type="button" data-order-chat="' + o.id + '">' + t("message_buyer") + "</button></div></div>";
+      }).join("") + "</div>";
+    } else if (ui.tab === "orders") {
+      if (!purchases.length) h += '<div class="empty"><b>' + t("no_orders_title") + "</b>" + t("no_orders_body") + "</div>";
+      else h += '<div class="list">' + purchases.map(function (o) {
+        return '<div class="li plain"><div class="li-b"><h4>' + t("order_no", { no: '<span dir="ltr">' + esc(o.no) + "</span>" }) + "</h4>" +
+          '<div class="note">' + fmtDate(o.created_at) + " · " + t("seller_x", { name: esc(o.seller ? o.seller.display_name : "") }) + " · " + t("payment_x", { method: t("pay_" + o.pay_method) }) + "</div>" +
+          '<div class="note">' + itemsLine(o) + "</div></div>" +
+          '<div class="li-acts"><span class="price">' + money(o.total, o.currency) + '</span><button class="btn sm b2b" type="button" data-order-chat="' + o.id + '">' + t("message_seller") + "</button></div></div>";
+      }).join("") + "</div>";
+    } else if (ui.tab === "bids") {
+      if (!bidOn.length) h += '<div class="empty"><b>' + t("no_bids_title") + "</b>" + t("no_bids_body") + "</div>";
+      else h += '<div class="list">' + bidOn.map(function (l) {
+        var mineMax = Math.max.apply(null, l.bids.filter(function (b) { return b.whoId === uid; }).map(function (b) { return b.amount; }));
+        var top = topBid(l), st, act = "";
+        if (ended(l)) {
+          if (top.whoId === uid) {
+            st = '<span class="status ok">' + t("won_for", { amount: money(top.amount, l.cur) }) + "</span>";
+            if (l.sold) act = '<span class="note">' + t("bought") + "</span>";
+            else if (inCart(l.id)) act = '<span class="note">' + t("in_cart") + "</span>";
+            else act = '<button class="btn sm primary" type="button" data-add="' + l.id + '">' + t("add_to_cart") + "</button>";
+          } else st = '<span class="status warn">' + t("not_won") + "</span> · " + money(top.amount, l.cur);
+        } else {
+          st = (top.whoId === uid ? '<span class="status ok">' + t("you_lead") + "</span>" : '<span class="status warn">' + t("outbid") + "</span>") + " · " + t("your_bid_x", { amount: money(mineMax, l.cur) }) + " · " + leftSpan(l);
+        }
+        return liRow(l, st, act);
+      }).join("") + "</div>";
+    } else if (ui.tab === "watch") {
+      if (!wl.length) h += '<div class="empty"><b>' + t("no_watch_title") + "</b>" + t("no_watch_body") + "</div>";
+      else h += '<div class="list">' + wl.map(function (l) {
+        var st = t("type_" + l.type) + " · ";
+        if (!inStock(l)) st += '<span class="status">' + t(l.type === "auction" ? "sold" : "sold_out") + "</span>";
+        else if (l.type === "auction" && ended(l)) st += '<span class="status">' + t("auction_ended") + "</span>";
+        else if (l.type === "auction") st += money(unitPrice(l, 1), l.cur) + " · " + leftSpan(l);
+        else if (l.type === "fixed") st += money(l.price, l.cur);
+        else st += t("from") + " " + money(fromPrice(l), l.cur) + " / " + esc(unitName(l.unit));
+        return liRow(l, st, '<button class="btn sm" type="button" data-watch="' + l.id + '">' + t("remove") + "</button>");
+      }).join("") + "</div>";
+    } else {
+      h += '<form class="profile" id="profForm" novalidate>' +
+        '<div class="field"><span class="flabel">' + t("i_sell_as") + '</span><div class="seg" role="group" id="pType">' +
+        '<button type="button" data-pt="privat" aria-pressed="' + (me.seller_type === "privat") + '">' + t("seller_private") + '</button><button type="button" data-pt="gewerbe" aria-pressed="' + (me.seller_type === "gewerbe") + '">' + t("seller_pro") + "</button></div>" +
+        '<span class="hint">' + t("seller_type_hint") + "</span></div>" +
+        '<div class="field"><label for="pName">' + t("shop_name") + '</label><input class="inp" id="pName" maxlength="40" dir="auto" value="' + esc(me.display_name) + '"><span class="hint">' + t("shop_name_hint") + "</span></div>" +
+        '<div class="two"><div class="field"><label for="pCountry">' + t("country") + '</label><select class="inp" id="pCountry">' + countryOpts(me.country) + "</select></div>" +
+        '<div class="field" id="pLocWrap"></div></div>' +
+        '<div class="box"><div class="note">' + t("profile_privacy") + "</div></div>" +
+        '<div class="err" id="pErr" hidden></div><div><button class="btn primary" type="submit" id="pSave">' + t("save_profile") + "</button></div></form>";
+    }
+    $("main").innerHTML = h;
+    if (ui.tab === "profile") {
+      var ptype = me.seller_type;
+      var drawLoc = function () {
+        var c = $("pCountry").value, cur = $("pLoc") ? $("pLoc").value : me.loc;
+        var isProv = PROVINCES.some(function (p) { return p[0] === cur; });
+        $("pLocWrap").innerHTML = c === "AF"
+          ? '<label for="pLoc">' + t("province") + '</label><select class="inp" id="pLoc"><option value="">—</option>' + provOpts(cur) + "</select>"
+          : '<label for="pLoc">' + t("city") + '</label><input class="inp" id="pLoc" maxlength="80" dir="auto" value="' + esc(isProv ? "" : cur) + '">';
+      };
+      drawLoc();
+      $("pCountry").addEventListener("change", drawLoc);
+      $("pType").addEventListener("click", function (e) {
+        var x = e.target.closest("[data-pt]"); if (!x) return;
+        ptype = x.getAttribute("data-pt");
+        $("pType").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b === x)); });
+      });
+      $("profForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = $("pName").value.trim();
+        if (name.length < 2) { $("pErr").textContent = t("err_name_short"); $("pErr").hidden = false; return; }
+        $("pSave").disabled = true;
+        sb.from("profiles").update({ seller_type: ptype, display_name: name, country: $("pCountry").value, loc: $("pLoc").value.trim() }).eq("id", uid)
+          .then(function (r) { if (r.error) throw r.error; toast(t("profile_saved")); return refresh(); })
+          .catch(function (err) { $("pSave").disabled = false; $("pErr").textContent = errMsg(err); $("pErr").hidden = false; });
+      });
+    }
+  }
+
+  function render() {
+    $("cartCount").textContent = num(local.cart.length);
+    $("accLbl").textContent = uid ? t("my_area") : t("login");
+    $("accDot").hidden = !(uid && unreadCount());
+    if (ui.view === "account" && uid) renderAccount(); else { ui.view = "browse"; renderBrowse(); }
+  }
+
+  /* ---------- Sheet ---------- */
+  var sheetMode = null, sheetId = null, lastFocus = null;
+  function openSheet(title, body, foot, mode, id) {
+    if ($("sheet").hidden) lastFocus = document.activeElement;
+    sheetMode = mode; sheetId = id || null;
+    $("sheetTitle").textContent = title;
+    $("sheetBody").innerHTML = body;
+    $("sheetBody").scrollTop = 0;
+    if (foot) { $("sheetFoot").innerHTML = foot; $("sheetFoot").hidden = false; } else { $("sheetFoot").innerHTML = ""; $("sheetFoot").hidden = true; }
+    $("scrim").hidden = false; $("sheet").hidden = false;
+    $("sheetClose").focus();
+  }
+  function closeSheet() {
+    $("scrim").hidden = true; $("sheet").hidden = true; sheetMode = null; sheetId = null;
+    if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {}
+  }
+  $("sheetClose").addEventListener("click", closeSheet);
+  $("scrim").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
+  function busy(btn, on, label) { if (!btn) return; btn.disabled = on; if (label) btn.textContent = label; }
+
+  /* ---------- Safety guide ---------- */
+  function openSafety() {
+    function ul(keys) { return '<ul class="tips">' + keys.map(function (k) { return "<li>" + t(k) + "</li>"; }).join("") + "</ul>"; }
+    var tips = ["safety_1", "safety_2", "safety_3", "safety_4", "safety_5", "safety_6"].map(function (k) { return "<li>" + t(k) + "</li>"; }).join("");
+    openSheet(t("privacy_title"),
+      '<p style="margin:0">' + t("privacy_intro") + "</p>" +
+      '<div><div class="lbl">' + t("privacy_public_h") + "</div>" + ul(["privacy_public_1", "privacy_public_2", "privacy_public_3"]) + "</div>" +
+      '<div><div class="lbl">' + t("privacy_hidden_h") + "</div>" + ul(["privacy_hidden_1", "privacy_hidden_2", "privacy_hidden_3", "privacy_hidden_4"]) + "</div>" +
+      '<div><div class="lbl">' + t("safety_title") + '</div><ol class="tips">' + tips + "</ol></div>" +
+      '<div class="box"><div class="note">' + t("privacy_limits") + "</div></div>" +
+      '<p class="note" style="margin:0">' + t("privacy_inclusion") + "</p>", "", "safety");
+  }
+
+  /* ---------- Auth ---------- */
+  function openAuth(mode, note) {
+    var b = "";
+    if (note) b += '<div class="box"><div class="note">' + esc(note) + "</div></div>";
+    if (mode === "login" || mode === "signup") {
+      b += '<div class="seg" role="group" style="align-self:flex-start"><button type="button" data-am="login" aria-pressed="' + (mode === "login") + '">' + t("login") + '</button><button type="button" data-am="signup" aria-pressed="' + (mode === "signup") + '">' + t("register") + "</button></div>" +
+        '<form id="authForm" novalidate style="display:flex;flex-direction:column;gap:14px">' +
+        (mode === "signup" ? '<div class="field"><label for="aName">' + t("shop_name") + '</label><input class="inp" id="aName" maxlength="40" dir="auto" autocomplete="nickname"><span class="hint">' + t("signup_name_hint") + "</span></div>" : "") +
+        '<div class="field"><label for="aEmail">' + t("email") + '</label><input class="inp" id="aEmail" type="email" dir="ltr" autocomplete="email"></div>' +
+        '<div class="field"><label for="aPass">' + t("password") + '</label><input class="inp" id="aPass" type="password" dir="ltr" autocomplete="' + (mode === "signup" ? "new-password" : "current-password") + '">' + (mode === "signup" ? '<span class="hint">' + t("password_hint") + "</span>" : "") + "</div>" +
+        '<div class="err" id="aErr" hidden></div><button class="btn primary" type="submit" id="aSubmit">' + t(mode === "signup" ? "create_account" : "login") + "</button>" +
+        (mode === "login" ? '<button class="linkbtn" type="button" id="aForgot" style="align-self:flex-start">' + t("forgot_password") + "</button>" : '<p class="note" style="margin:0">' + t("signup_confirm_hint") + "</p>") +
+        "</form>";
+    } else if (mode === "reset") {
+      b += '<form id="authForm" novalidate style="display:flex;flex-direction:column;gap:14px"><p class="note" style="margin:0">' + t("reset_intro") + "</p>" +
+        '<div class="field"><label for="aEmail">' + t("email") + '</label><input class="inp" id="aEmail" type="email" dir="ltr" autocomplete="email"></div>' +
+        '<div class="err" id="aErr" hidden></div><button class="btn primary" type="submit" id="aSubmit">' + t("send_link") + "</button>" +
+        '<button class="linkbtn" type="button" data-am="login" style="align-self:flex-start">' + t("back_to_login") + "</button></form>";
+    } else if (mode === "newpass") {
+      b += '<form id="authForm" novalidate style="display:flex;flex-direction:column;gap:14px"><p class="note" style="margin:0">' + t("newpass_intro") + "</p>" +
+        '<div class="field"><label for="aPass">' + t("new_password") + '</label><input class="inp" id="aPass" type="password" dir="ltr" autocomplete="new-password"><span class="hint">' + t("password_hint") + "</span></div>" +
+        '<div class="err" id="aErr" hidden></div><button class="btn primary" type="submit" id="aSubmit">' + t("save_password") + "</button></form>";
+    }
+    openSheet(t(mode === "signup" ? "register" : mode === "reset" ? "reset_title" : mode === "newpass" ? "new_password" : "login"), b, "", "auth");
+    $("sheetBody").querySelectorAll("[data-am]").forEach(function (x) { x.addEventListener("click", function () { openAuth(x.getAttribute("data-am")); }); });
+    if ($("aForgot")) $("aForgot").addEventListener("click", function () { openAuth("reset"); });
+    var first = $("aName") || $("aEmail") || $("aPass"); if (first) first.focus();
+    $("authForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var err = $("aErr"), btn = $("aSubmit");
+      function fail(m) { err.textContent = m; err.hidden = false; busy(btn, false); }
+      var email = $("aEmail") ? $("aEmail").value.trim() : "", pass = $("aPass") ? $("aPass").value : "";
+      if ($("aEmail") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(t("err_email_invalid"));
+      if ((mode === "signup" || mode === "newpass") && pass.length < 8) return fail(t("err_password_short"));
+      if (mode === "login" && !pass) return fail(t("err_password_missing"));
+      var name = $("aName") ? $("aName").value.trim() : "";
+      if (mode === "signup" && name.length < 2) return fail(t("err_name_short"));
+      busy(btn, true);
+      var p;
+      if (mode === "login") p = sb.auth.signInWithPassword({ email: email, password: pass }).then(function (r) {
+        if (r.error) throw r.error; closeSheet(); toast(t("logged_in"));
+      });
+      else if (mode === "signup") p = sb.auth.signUp({ email: email, password: pass, options: { data: { display_name: name }, emailRedirectTo: SITE_URL } }).then(function (r) {
+        if (r.error) throw r.error;
+        if (r.data && r.data.session) { closeSheet(); toast(t("account_created")); return; }
+        openSheet(t("almost_done"), '<div class="box"><div class="status ok">' + t("confirm_email_title") + "</div><div>" + t("confirm_email_body", { email: '<b dir="ltr">' + esc(email) + "</b>" }) + '</div><div class="note">' + t("confirm_email_spam") + "</div></div>", "", "auth");
+      });
+      else if (mode === "reset") p = sb.auth.resetPasswordForEmail(email, { redirectTo: SITE_URL }).then(function (r) {
+        if (r.error) throw r.error;
+        openSheet(t("email_sent"), '<div class="box"><div>' + t("reset_sent", { email: '<b dir="ltr">' + esc(email) + "</b>" }) + '</div><div class="note">' + t("confirm_email_spam") + "</div></div>", "", "auth");
+      });
+      else p = sb.auth.updateUser({ password: pass }).then(function (r) {
+        if (r.error) throw r.error; closeSheet(); toast(t("password_saved"));
+      });
+      p.catch(function (e2) { fail(errMsg(e2)); });
+    });
+  }
+
+  /* ---------- Conversations ---------- */
+  var convTimer = null;
+  function openConversation(cid) {
+    var c = convs.filter(function (x) { return x.id === cid; })[0];
+    var title = c ? c.title : t("tab_messages");
+    var other = c ? (c.buyer_id === uid ? (c.seller ? c.seller.display_name : "?") : (c.buyer ? c.buyer.display_name : "?")) : "";
+    openSheet(title, '<div class="note">' + (c ? t(c.buyer_id === uid ? "conv_with_seller" : "conv_with_buyer", { name: esc(other) }) : "") + (c && c.listing_id ? ' · <button class="linkbtn" type="button" id="convListing">' + t("view_listing") + "</button>" : "") + "</div>" +
+      '<div class="box"><div class="note">' + t("chat_safety") + "</div></div>" +
+      '<div class="chat" id="chat"><div class="note">' + t("loading") + "</div></div>",
+      '<form id="msgForm" class="msgform" novalidate><label class="sr" for="msgBody">' + t("message") + '</label><textarea class="inp" id="msgBody" rows="2" maxlength="2000" dir="auto" placeholder="' + esc(t("write_message")) + '"></textarea><button class="btn primary" type="submit" id="msgSend">' + t("send") + "</button></form>", "conv", cid);
+    if ($("convListing")) $("convListing").addEventListener("click", function () { openDetail(c.listing_id); });
+    $("msgForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var body = $("msgBody").value.trim(); if (!body) return;
+      busy($("msgSend"), true);
+      sb.from("messages").insert({ conversation_id: cid, body: body }).then(function (r) {
+        if (r.error) throw r.error; $("msgBody").value = ""; busy($("msgSend"), false); return loadMessages(cid);
+      }).catch(function (err) { busy($("msgSend"), false); toast(errMsg(err)); });
+    });
+    loadMessages(cid).then(function () { return sb.rpc("mark_read", { p_conv: cid }); }).then(function () { return loadMine(); }).then(render).catch(function () {});
+    clearInterval(convTimer);
+    convTimer = setInterval(function () { if (sheetMode === "conv" && sheetId === cid) { if (document.visibilityState === "visible") loadMessages(cid); } else clearInterval(convTimer); }, 10000);
+  }
+  function loadMessages(cid) {
+    return sb.from("messages").select("*").eq("conversation_id", cid).order("created_at", { ascending: true }).limit(500).then(function (r) {
+      if (r.error) throw r.error;
+      if (sheetMode !== "conv" || sheetId !== cid) return;
+      var box = $("chat"), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+      box.innerHTML = r.data.length ? r.data.map(function (m) {
+        return '<div class="msg' + (m.sender_id === uid ? " mine" : "") + '"><div dir="auto">' + esc(m.body) + '</div><span class="note">' + fmtDate(m.created_at) + "</span></div>";
+      }).join("") : '<div class="note">' + t("no_messages_yet") + "</div>";
+      if (atBottom || box.dataset.init !== "1") { box.scrollTop = box.scrollHeight; box.dataset.init = "1"; }
+    }).catch(function (e) { if ($("chat")) $("chat").innerHTML = '<div class="err">' + esc(errMsg(e)) + "</div>"; });
+  }
+  function contactSeller(l, prefill) {
+    if (needLogin("login_to_message")) return;
+    sb.rpc("start_conversation", { p_listing: l.id }).then(function (r) {
+      if (r.error) throw r.error;
+      return loadMine().then(function () { openConversation(r.data); if (prefill && $("msgBody")) $("msgBody").value = prefill; });
+    }).catch(function (e) { toast(errMsg(e)); });
+  }
+
+  /* ---------- Detail ---------- */
+  function shipBlock(l) {
+    var to = local.shipTo, s = shipFor(l, to);
+    var h = '<div class="box' + (s ? "" : " warnbox") + '"><div class="lbl">' + t("delivery_to_x", { country: esc(cname(to)) }) + "</div>";
+    if (!s) h += '<div class="status warn">' + t("no_delivery_to", { country: esc(cname(to)) }) + "</div>";
+    else if (s.pickup) h += "<div>" + t("pickup_in", { place: esc(place(l)) }) + "</div>";
+    else h += '<div><span class="mono" style="font-weight:600">' + (s.cost === 0 ? t("free") : money(s.cost, l.cur)) + "</span>" + (s.days ? " · " + t("approx_days", { d: esc(s.days) }) : "") + "</div>";
+    if (s && customs(l, to)) h += '<div class="note">' + t("customs_long") + "</div>";
+    var offered = ZONES.filter(function (zn) { return l.ship[zn]; }).map(function (zn) {
+      var z = l.ship[zn];
+      return "<li>" + (zn === "inland" ? t("zone_inland", { country: esc(cname(l.country)) }) : t("zone_" + zn)) + ": " + (Number(z.c) === 0 ? t("free") : money(z.c, l.cur)) + (z.d ? sep() + t("days_x", { d: esc(z.d) }) : "") + "</li>";
+    });
+    if (l.pickup) offered.push("<li>" + t("pickup_in", { place: esc(place(l)) }) + "</li>");
+    h += '<div><div class="lbl" style="margin-top:4px">' + t("all_delivery_options") + '</div><ul class="zones">' + offered.join("") + "</ul></div></div>";
+    return h;
+  }
+  function inCart(id) { return local.cart.some(function (x) { return x.id === id; }); }
+  function cartQty(id) { var x = local.cart.filter(function (c) { return c.id === id; })[0]; return x ? x.qty : 0; }
+
+  function openDetail(id) {
+    var l = byId(id); if (!l) { toast(t("listing_gone")); return; }
+    var own = isMine(l), s = shipFor(l, local.shipTo);
+    var b = thumb(l, "d-thumb") +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' + tags(l) + whoBadge(l) + "</div>" +
+      '<h3 class="d-title" dir="auto">' + esc(l.title) + "</h3>";
+    var foot = "";
+
+    if (l.type === "auction") {
+      var isEnded = ended(l), top = topBid(l);
+      b += '<div class="box auction"><div class="row"><div><div class="lbl">' + t(top ? (isEnded ? "winning_bid" : "current_bid") : "start_price") + '</div><div class="big">' + money(unitPrice(l, 1), l.cur) + "</div></div>" +
+        '<div style="text-align:end"><div class="lbl">' + t(isEnded ? "status" : "ends_in") + "</div>" + leftSpan(l) + "</div></div>";
+      if (isEnded) {
+        if (!top) b += '<div class="status">' + t("ended_no_bids") + "</div>";
+        else if (top.whoId === uid) b += '<div class="status ok">' + t(l.sold ? "you_won_bought" : "you_won") + "</div>";
+        else b += '<div class="note">' + t("won_by", { who: esc(own ? top.who : mask(top.who)) }) + "</div>";
+      } else if (own) {
+        b += '<div class="note">' + t("own_auction") + "</div>";
+      } else if (!s) {
+        b += '<div class="note">' + t("bid_needs_delivery") + "</div>";
+      } else {
+        var mn = minNext(l);
+        b += '<form id="bidForm" novalidate><div class="field"><label for="bidAmount">' + t("your_bid", { cur: l.cur }) + "</label>" +
+          '<div class="bidline"><input class="inp mono" id="bidAmount" type="text" inputmode="decimal" dir="ltr" value="' + mn + '">' +
+          '<button class="btn bid" type="submit" id="bidBtn">' + t("place_bid") + "</button></div>" +
+          '<div class="hint">' + t("min_bid_hint", { amount: money(mn, l.cur) }) + '</div><div class="err" id="bidErr" hidden></div></div></form>';
+        if (top && top.whoId === uid) b += '<div class="status ok">' + t("you_lead") + "</div>";
+      }
+      if (buyNowOpen(l)) {
+        b += '<div class="buynow"><div><div class="lbl">' + t("buy_now") + '</div><div class="mono" style="font-weight:600;font-size:18px">' + money(l.buyNow, l.cur) + '</div>' +
+          '<div class="note">' + t("buy_now_hint") + "</div></div>" +
+          (!own && s ? '<button class="btn primary" type="button" id="buyNowBtn">' + t("buy_now") + "</button>" : "") + "</div>";
+      }
+      b += "</div>";
+      b += '<div><div class="lbl" style="margin-bottom:4px">' + t("bid_history") + "</div>" + (l.bids.length ? '<ul class="hist">' + l.bids.slice().reverse().map(function (x) {
+        var who = x.whoId === uid ? t("you") : own ? x.who : mask(x.who);
+        return '<li><span class="' + (x.whoId === uid ? "me" : "") + '">' + esc(who) + (x.buyNow ? " (" + t("buy_now") + ")" : "") + '</span><span class="note">' + fmtDate(x.t) + '</span><span class="mono">' + money(x.amount, l.cur) + "</span></li>";
+      }).join("") + "</ul>" : '<div class="note">' + t("no_bids_yet") + "</div>") + "</div>";
+      if (isEnded && top && top.whoId === uid && !l.sold) foot = inCart(l.id) ? '<button class="btn" type="button" disabled>' + t("in_cart") + "</button>" : '<button class="btn primary" type="button" id="addBtn">' + t("add_to_cart") + "</button>";
+    } else {
+      var isW = l.type === "wholesale", mq = moq(l), un = unitName(l.unit);
+      b += '<div class="box' + (isW ? " whs" : "") + '">';
+      if (isW) {
+        b += '<div class="lbl">' + t("tier_prices_per", { unit: esc(un) }) + '</div><div style="overflow-x:auto"><table class="tiers"><thead><tr><th>' + t("quantity") + '</th><th class="num">' + t("price_per", { unit: esc(un) }) + "</th></tr></thead><tbody>" +
+          l.tiers.map(function (x, i) {
+            var next = l.tiers[i + 1];
+            return '<tr data-tier="' + i + '"><td>' + (next ? num(x.min) + " – " + num(next.min - 1) : t("from") + " " + num(x.min)) + " " + esc(un) + '</td><td class="num">' + money(x.price, l.cur) + "</td></tr>";
+          }).join("") + "</tbody></table></div>" +
+          '<div class="note">' + t("moq_x", { n: num(mq), unit: esc(un) }) + " · " + t("n_available", { n: num(l.stock), unit: esc(un) }) + "</div>";
+      } else {
+        b += '<div class="lbl">' + t("type_fixed") + '</div><div class="big">' + money(l.price, l.cur) + '</div><div class="note">' + (l.stock > 0 ? t("n_available", { n: num(l.stock), unit: esc(un) }) : t("sold_out")) + "</div>";
+      }
+      var buyable = !own && inStock(l) && s;
+      if (buyable) {
+        var startQ = inCart(l.id) ? cartQty(l.id) : mq;
+        b += '<div class="field"><label for="dQty">' + t("quantity") + (isW ? " (" + esc(un) + ")" : "") + '</label><div class="bidline">' +
+          '<input class="inp mono" id="dQty" type="text" inputmode="numeric" dir="ltr" value="' + startQ + '"' + (l.stock === 1 ? " readonly" : "") + "></div>" +
+          '<div class="calc" id="dCalc"></div><div class="err" id="qtyErr" hidden></div></div>';
+        foot = '<button class="btn primary" type="button" id="addBtn">' + t(inCart(l.id) ? "update_cart" : "add_to_cart") + "</button>";
+      } else if (!own && !inStock(l)) foot = '<button class="btn" type="button" disabled>' + t("sold_out") + "</button>";
+      else if (!own && !s) foot = '<button class="btn" type="button" disabled>' + t("no_delivery_to", { country: esc(cname(local.shipTo)) }) + "</button>";
+      b += "</div>";
+      if (isW && !own) {
+        b += '<div class="box"><div class="lbl">' + t("custom_offer") + '</div><div class="note">' + t("custom_offer_hint") + "</div>" +
+          '<div class="two"><div class="field"><label for="rQty">' + t("quantity") + " (" + esc(un) + ')</label><input class="inp mono" id="rQty" type="text" inputmode="numeric" dir="ltr" value="' + mq + '"></div>' +
+          '<div class="field"><label for="rTarget">' + t("target_price", { unit: esc(un), cur: l.cur }) + '</label><input class="inp mono" id="rTarget" type="text" inputmode="decimal" dir="ltr" placeholder="—"></div></div>' +
+          '<div><button class="btn b2b" type="button" id="rfqBtn">' + t("request_offer") + "</button></div></div>";
+      }
+    }
+
+    b += '<div class="box"><div class="lbl">' + t("payment_methods") + "</div><div>" + esc(payList(l.pays)) + '</div><div class="note">' + t("payment_hint") + "</div></div>";
+    b += shipBlock(l);
+    b += '<dl class="facts"><dt>' + t("seller") + "</dt><dd>" + esc(sellerName(l)) + "</dd>" +
+      "<dt>" + t("location") + "</dt><dd>" + esc(place(l)) + "</dd><dt>" + t("condition") + "</dt><dd>" + esc(t("cond_" + l.cond)) + "</dd>" +
+      "<dt>" + t("category") + "</dt><dd>" + esc(t("cat_" + catOf(l.cat).id)) + "</dd><dt>" + t("listed_on") + "</dt><dd>" + fmtDay(l.createdAt) + "</dd></dl>" +
+      '<div><div class="lbl" style="margin-bottom:4px">' + t("description") + '</div><p class="desc" dir="auto">' + esc(l.desc || t("no_description")) + "</p></div>";
+
+    var w = !!watchSet[l.id];
+    var pre = (!own ? '<button class="btn" type="button" id="detailMsg">' + t("message_seller") + "</button>" : "") +
+      (!own ? '<button class="btn" type="button" id="detailWatch" aria-pressed="' + w + '"><svg class="heart" viewBox="0 0 24 24" aria-hidden="true">' + HEART_PATH + "</svg>" + t(w ? "watched_short" : "watch_short") + "</button>" : "") +
+      (canEdit(l) ? '<button class="btn" type="button" id="detailEdit">' + t("edit") + "</button>" : "");
+    openSheet(t("type_" + l.type), b, pre + foot, "detail", id);
+
+    var f = $("bidForm"); if (f) f.addEventListener("submit", function (e) { e.preventDefault(); placeBid(id); });
+    if ($("buyNowBtn")) $("buyNowBtn").addEventListener("click", function () { buyNow(id); });
+    if ($("detailWatch")) $("detailWatch").addEventListener("click", function () { toggleWatch(id).then(function () { if (sheetId === id) openDetail(id); }); });
+    if ($("detailMsg")) $("detailMsg").addEventListener("click", function () { contactSeller(l); });
+    if ($("detailEdit")) $("detailEdit").addEventListener("click", function () { openSell(id); });
+    if ($("dQty")) { $("dQty").addEventListener("input", function () { updateCalc(l); }); updateCalc(l); }
+    if ($("addBtn")) $("addBtn").addEventListener("click", function () {
+      if (l.type === "auction") { addToCart(id, 1); openDetail(id); return; }
+      var q = readQty(l); if (q == null) return;
+      if (addToCart(id, q)) openDetail(id);
+    });
+    if ($("rfqBtn")) $("rfqBtn").addEventListener("click", function () {
+      var q = parseNum($("rQty").value), tp = parseNum($("rTarget").value);
+      var text = t("rfq_text", { qty: isFinite(q) ? num(q) : "?", unit: unitName(l.unit) }) + (isFinite(tp) && tp > 0 ? " " + t("rfq_text_price", { price: money(tp, l.cur) }) : "");
+      contactSeller(l, text);
+    });
+  }
+  function qtyProblem(l, q) {
+    var mq = moq(l);
+    if (!isFinite(q) || q !== Math.floor(q)) return t("err_whole_number");
+    if (q < mq) return t("err_moq_short", { n: num(mq), unit: unitName(l.unit) });
+    if (q > l.stock) return t("err_stock_short", { n: num(l.stock), unit: unitName(l.unit) });
+    return null;
+  }
+  function updateCalc(l) {
+    var q = parseNum($("dQty").value), p = qtyProblem(l, q), s = shipFor(l, local.shipTo);
+    $("dQty").classList.toggle("bad", !!p);
+    if (p) { $("dCalc").innerHTML = ""; $("qtyErr").textContent = p; $("qtyErr").hidden = false; }
+    else {
+      $("qtyErr").hidden = true;
+      var u = unitPrice(l, q), sub = round2(u * q);
+      $("dCalc").innerHTML = "<span>" + num(q) + " × " + money(u, l.cur) + '</span><span class="mono">' + money(sub, l.cur) + "</span>" +
+        "<span>" + t("shipping") + '</span><span class="mono">' + money(s ? s.cost : 0, l.cur) + '</span><span class="tot">' + t("total") + '</span><span class="tot mono">' + money(round2(sub + (s ? s.cost : 0)), l.cur) + "</span>";
+    }
+    if (l.type === "wholesale") {
+      var idx = 0; l.tiers.forEach(function (x, i) { if (q >= x.min) idx = i; });
+      document.querySelectorAll("[data-tier]").forEach(function (tr) { tr.classList.toggle("on", !p && +tr.getAttribute("data-tier") === idx); });
+    }
+  }
+  function readQty(l) {
+    var q = parseNum($("dQty").value), p = qtyProblem(l, q);
+    if (p) { $("qtyErr").textContent = p; $("qtyErr").hidden = false; $("dQty").focus(); return null; }
+    return q;
+  }
+  function placeBid(id) {
+    if (needLogin("login_to_bid")) return;
+    var l = byId(id), inp = $("bidAmount"), err = $("bidErr"), btn = $("bidBtn");
+    var v = parseNum(inp.value), mn = minNext(l);
+    function fail(m) { err.textContent = m; err.hidden = false; inp.classList.add("bad"); inp.focus(); busy(btn, false); }
+    if (!isFinite(v)) return fail(t("err_amount"));
+    v = round2(v);
+    if (v < mn) return fail(t("err_min_bid", { amount: money(mn, l.cur) }));
+    busy(btn, true);
+    sb.rpc("place_bid", { p_listing: id, p_amount: v }).then(function (r) {
+      if (r.error) throw r.error;
+      toast(t("bid_placed", { amount: money(v, l.cur) }));
+      return refresh().then(function () { openDetail(id); });
+    }).catch(function (e) { fail(errMsg(e)); refresh(); });
+  }
+  function buyNow(id) {
+    if (needLogin("login_to_buy")) return;
+    var btn = $("buyNowBtn"); busy(btn, true);
+    sb.rpc("buy_now", { p_listing: id }).then(function (r) {
+      if (r.error) throw r.error;
+      if (!inCart(id)) local.cart.push({ id: id, qty: 1 }); saveLocal();
+      toast(t("buy_now_done"));
+      return refresh().then(openCart);
+    }).catch(function (e) { busy(btn, false); toast(errMsg(e)); refresh().then(function () { openDetail(id); }); });
+  }
+
+  /* ---------- Cart & checkout ---------- */
+  function addToCart(id, qty) {
+    if (needLogin("login_to_buy")) return false;
+    var l = byId(id);
+    if (!l || !canBuy(l)) { toast(t("err_cannot_buy")); return false; }
+    if (!shipFor(l, local.shipTo)) { toast(t("no_delivery_to", { country: cname(local.shipTo) })); return false; }
+    var line = local.cart.filter(function (x) { return x.id === id; })[0];
+    if (line) { line.qty = qty; toast(t("cart_updated")); }
+    else { local.cart.push({ id: id, qty: qty }); toast(t("added_to_cart")); }
+    saveLocal(); render();
+    return true;
+  }
+  function cartLines() {
+    return local.cart.map(function (x) {
+      var l = byId(x.id), r = { id: x.id, qty: x.qty, l: l, problem: null, ship: null, unit: 0, sub: 0 };
+      if (!l) { r.problem = t("not_available"); return r; }
+      if (!canBuy(l)) r.problem = t(isMine(l) ? "err_own_item" : "err_cannot_buy");
+      else if (!(r.ship = shipFor(l, local.shipTo))) r.problem = t("no_delivery_to", { country: cname(local.shipTo) });
+      else if (l.type !== "auction") r.problem = qtyProblem(l, x.qty);
+      r.unit = unitPrice(l, x.qty); r.sub = round2(r.unit * x.qty);
+      return r;
+    });
+  }
+  function groups(lines) {
+    var g = {}, order = [];
+    lines.forEach(function (r) {
+      var k = r.l ? r.l.sellerId + "|" + r.l.cur : "gone";
+      if (!g[k]) { g[k] = { key: k, lines: [], seller: r.l ? sellerName(r.l) : "", cur: r.l ? r.l.cur : "AFN" }; order.push(k); }
+      g[k].lines.push(r);
+    });
+    return order.map(function (k) { return g[k]; });
+  }
+  function totals(lines) {
+    var sub = 0, ship = 0;
+    lines.forEach(function (r) { if (!r.problem) { sub += r.sub; ship += r.ship.cost; } });
+    return { sub: round2(sub), ship: round2(ship), total: round2(sub + ship) };
+  }
+  function commonPays(lines) {
+    return PAYS.filter(function (p) { return lines.every(function (r) { return r.l && r.l.pays.indexOf(p) > -1; }); });
+  }
+  function openCart() {
+    var lines = cartLines();
+    if (!lines.length) { openSheet(t("cart"), '<div class="empty"><b>' + t("cart_empty_title") + "</b>" + t("cart_empty_body") + "</div>", "", "cart"); return; }
+    var gs = groups(lines);
+    var b = '<div class="note">' + t("delivery_to_x", { country: "<b>" + esc(cname(local.shipTo)) + "</b>" }) + ". " + t("cart_hint") + "</div>";
+    gs.forEach(function (g, gi) {
+      var tt = totals(g.lines), bad = g.lines.some(function (r) { return r.problem; });
+      b += '<div class="box"><div class="lbl">' + (g.key === "gone" ? t("not_available") : t("order_from", { name: esc(g.seller) })) + "</div>";
+      b += g.lines.map(function (r) {
+        var l = r.l;
+        if (!l) return '<div class="ci"><div class="thumb"></div><div class="ci-t"><span class="bad">' + esc(r.problem) + '</span></div><div><button class="btn ghost danger sm" type="button" data-rm="' + esc(r.id) + '">' + t("remove") + "</button></div></div>";
+        var info = (r.qty > 1 || l.type === "wholesale" ? num(r.qty) + " " + esc(unitName(l.unit)) + " × " + money(r.unit, l.cur) : "");
+        var shipInfo = r.ship ? (r.ship.pickup ? t("pickup") : t("shipping_x", { amount: money(r.ship.cost, l.cur) })) + (customs(l, local.shipTo) ? " · " + t("customs_short") : "") : "";
+        return '<div class="ci">' + thumb(l) + '<div class="ci-t"><button class="linkbtn plainlink" type="button" dir="auto" data-cart-open="' + l.id + '">' + esc(l.title) + "</button>" + (info ? "<span>" + info + "</span>" : "") +
+          (shipInfo ? "<span>" + shipInfo + "</span>" : "") + (r.problem ? '<span class="bad">' + esc(r.problem) + "</span>" : "") + "</div>" +
+          '<div style="text-align:end"><div class="mono">' + money(r.sub, l.cur) + '</div><button class="btn ghost danger sm" type="button" data-rm="' + l.id + '" style="padding:2px 0">' + t("remove") + "</button></div></div>";
+      }).join("");
+      if (g.key !== "gone") {
+        b += '<div class="sum"><span>' + t("subtotal") + '</span><span class="mono">' + money(tt.sub, g.cur) + "</span><span>" + t("shipping") + '</span><span class="mono">' + money(tt.ship, g.cur) + '</span><span class="tot">' + t("total") + '</span><span class="tot mono">' + money(tt.total, g.cur) + "</span></div>";
+        b += bad ? '<div class="status warn">' + t("fix_cart") + "</div>" : '<div><button class="btn primary" type="button" data-checkout="' + gi + '">' + t("checkout_this") + "</button></div>";
+      }
+      b += "</div>";
+    });
+    openSheet(t("cart"), b, "", "cart");
+    $("sheetBody").querySelectorAll("[data-rm]").forEach(function (x) {
+      x.addEventListener("click", function () { var id = x.getAttribute("data-rm"); local.cart = local.cart.filter(function (c) { return c.id !== id; }); saveLocal(); render(); openCart(); });
+    });
+    $("sheetBody").querySelectorAll("[data-cart-open]").forEach(function (x) { x.addEventListener("click", function () { openDetail(x.getAttribute("data-cart-open")); }); });
+    $("sheetBody").querySelectorAll("[data-checkout]").forEach(function (x) {
+      x.addEventListener("click", function () { if (needLogin("login_to_buy")) return; openCheckout(gs[+x.getAttribute("data-checkout")]); });
+    });
+  }
+  function fld(id, label, ac, val, hint, ltr) { return '<div class="field"><label for="' + id + '">' + label + '</label><input class="inp" id="' + id + '" type="text" autocomplete="' + ac + '"' + (ltr ? ' dir="ltr"' : ' dir="auto"') + ' value="' + esc(val || "") + '">' + (hint ? '<span class="hint">' + hint + "</span>" : "") + "</div>"; }
+  function openCheckout(g) {
+    var lines = g.lines;
+    if (lines.some(function (r) { return r.problem; })) { openCart(); return; }
+    var tt = totals(lines), pays = commonPays(lines), anyCustoms = lines.some(function (r) { return customs(r.l, local.shipTo); });
+    var isAF = local.shipTo === "AF";
+    var b = '<div class="box"><div class="lbl">' + t("how_payment_works") + '</div><div class="note">' + t("how_payment_body") + "</div></div>" +
+      '<form id="coForm" novalidate style="display:flex;flex-direction:column;gap:14px">' +
+      fld("coName", t("name_for_delivery"), "name", me ? me.display_name : "", t("name_for_delivery_hint")) +
+      (isAF ? '<div class="field"><label for="coCity">' + t("province") + '</label><select class="inp" id="coCity"><option value="">—</option>' + provOpts(me && me.country === "AF" ? me.loc : "") + "</select></div>" : fld("coCity", t("city"), "address-level2", "")) +
+      '<div class="field"><label for="coAddr">' + t("address_desc") + '</label><textarea class="inp" id="coAddr" rows="2" maxlength="300" dir="auto"></textarea><span class="hint">' + t("address_desc_hint") + "</span></div>" +
+      fld("coPhone", t("phone_optional"), "tel", "", t("phone_hint"), true) +
+      '<div class="field"><span class="flabel">' + t("payment_method") + "</span>" + (pays.length ? pays.map(function (p, i) { return '<label class="check"><input type="radio" name="coPay" value="' + p + '"' + (i === 0 ? " checked" : "") + "> " + t("pay_" + p) + "</label>"; }).join("") : '<div class="status warn">' + t("no_common_pay") + "</div>") + "</div>" +
+      '<div class="field"><span class="flabel">' + t("country") + "</span><div>" + esc(cname(local.shipTo)) + "</div></div>" +
+      '<div class="err" id="coErr" hidden></div></form>' +
+      (anyCustoms ? '<div class="box warnbox"><div class="note">' + t("customs_long") + "</div></div>" : "") +
+      '<div class="sum"><span>' + t("subtotal") + '</span><span class="mono">' + money(tt.sub, g.cur) + "</span><span>" + t("shipping") + '</span><span class="mono">' + money(tt.ship, g.cur) + '</span><span class="tot">' + t("total") + '</span><span class="tot mono">' + money(tt.total, g.cur) + "</span></div>";
+    openSheet(t("checkout"), b, '<button class="btn" type="button" id="backCart">' + t("back") + '</button><button class="btn primary" type="button" id="placeOrder"' + (pays.length ? "" : " disabled") + ">" + t("place_order") + "</button>", "checkout");
+    $("backCart").addEventListener("click", openCart);
+    $("placeOrder").addEventListener("click", function () { placeOrder(g); });
+    $("coForm").addEventListener("submit", function (e) { e.preventDefault(); placeOrder(g); });
+  }
+  function placeOrder(g) {
+    var bad = [];
+    ["coName", "coCity"].forEach(function (id) { var el = $(id), ok = el.value.trim().length > 0; el.classList.toggle("bad", !ok); if (!ok) bad.push(el); });
+    if (bad.length) { $("coErr").textContent = t("err_need_name_city"); $("coErr").hidden = false; bad[0].focus(); return; }
+    var payEl = document.querySelector('input[name="coPay"]:checked'); if (!payEl) return;
+    var fresh = cartLines().filter(function (r) { return g.lines.some(function (x) { return x.id === r.id; }); });
+    if (fresh.some(function (r) { return r.problem; })) { openCart(); return; }
+    var btn = $("placeOrder"); busy(btn, true, t("sending"));
+    sb.rpc("place_order", {
+      p_items: fresh.map(function (r) { return { id: r.id, qty: r.qty }; }), p_ship_to: local.shipTo,
+      p_name: $("coName").value.trim(), p_address: $("coAddr").value.trim(), p_city: $("coCity").value.trim(),
+      p_phone: $("coPhone").value.trim(), p_pay_method: payEl.value
+    }).then(function (r) {
+      if (r.error) throw r.error;
+      var no = r.data;
+      local.cart = local.cart.filter(function (c) { return !fresh.some(function (x) { return x.id === c.id; }); }); saveLocal();
+      return refresh().then(function () {
+        var o = purchases.filter(function (x) { return x.no === no; })[0];
+        openSheet(t("order_sent"), '<div class="box"><div class="lbl">' + t("order_number") + '</div><div class="big" dir="ltr">' + esc(no) + '</div><div class="status ok">' + t("order_sent_body") + "</div>" +
+          '<div class="note">' + t("order_next") + "</div></div>",
+          (o ? '<button class="btn b2b" type="button" id="orderChat">' + t("message_seller") + "</button>" : "") + '<button class="btn primary" type="button" id="toOrders">' + t("to_my_orders") + "</button>", "done");
+        $("toOrders").addEventListener("click", function () { ui.view = "account"; ui.tab = "orders"; render(); closeSheet(); });
+        if ($("orderChat")) $("orderChat").addEventListener("click", function () {
+          sb.rpc("order_conversation", { p_order: o.id }).then(function (rr) { if (rr.error) throw rr.error; return loadMine().then(function () { openConversation(rr.data); }); }).catch(function (e) { toast(errMsg(e)); });
+        });
+      });
+    }).catch(function (e) { busy(btn, false, t("place_order")); $("coErr").textContent = errMsg(e); $("coErr").hidden = false; refresh(); });
+  }
+
+  /* ---------- Sell ---------- */
+  var draftFile = null;
+  function openSell(editId) {
+    if (!me) { toast(t("profile_loading")); return; }
+    var ed = editId ? byId(editId) : null;
+    if (ed && !canEdit(ed)) { toast(t("err_auction_locked")); return; }
+    draftFile = null;
+    var sellerType = ed ? ed.sellerType : me.seller_type;
+    var country = ed ? ed.country : me.country;
+    var type = ed ? ed.type : "fixed";
+    var isEU = EU.indexOf(country) > -1, isAF = country === "AF";
+    var catOpts = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(t("cat_" + c.id)) + "</option>"; }).join("");
+    var condOpts = CONDS.map(function (c) { return '<option value="' + c + '"' + (c === "new" ? " selected" : "") + ">" + esc(t("cond_" + c)) + "</option>"; }).join("");
+    var unitOpts = UNITS.map(function (u) { return '<option value="' + u + '">' + esc(t("unit_" + u)) + "</option>"; }).join("");
+    var curSel = ed ? ed.cur : (isAF ? "AFN" : "USD");
+    var curOpts = CURRENCIES.map(function (c) { return '<option value="' + c + '"' + (c === curSel ? " selected" : "") + ">" + esc(t("cur_" + c)) + " (" + c + ")</option>"; }).join("");
+    var pays = ed ? ed.pays : (isAF ? ["cash", "mobile"] : ["hawala"]);
+
+    var typeField = ed
+      ? '<div class="field"><span class="flabel">' + t("listing_type") + '</span><div class="note">' + t("type_" + type) + (type === "auction" ? " · " + t("ends_at", { date: fmtDate(ed.endsAt) }) : "") + ". " + t("type_locked") + "</div></div>"
+      : '<div class="field"><span class="flabel">' + t("listing_type") + '</span><div class="seg" role="group" id="sType">' +
+        '<button type="button" data-st="fixed" aria-pressed="true">' + t("type_fixed") + '</button><button type="button" data-st="auction" aria-pressed="false">' + t("type_auction") + "</button>" +
+        '<button type="button" data-st="wholesale" aria-pressed="false"' + (sellerType === "gewerbe" ? "" : " disabled") + ">" + t("type_wholesale") + "</button></div>" +
+        (sellerType === "gewerbe" ? "" : '<span class="hint">' + t("wholesale_needs_pro") + "</span>") + "</div>";
+
+    function zoneRow(zn) {
+      var cur = ed ? ed.ship[zn] : null;
+      var on = ed ? !!cur : zn === "inland";
+      var label = zn === "inland" ? t("zone_inland", { country: cname(country) }) : t("zone_" + zn);
+      return '<div class="zrow"><label class="check"><input type="checkbox" id="sZ_' + zn + '"' + (on ? " checked" : "") + "> " + esc(label) + "</label>" +
+        '<input class="inp mono" id="sC_' + zn + '" type="text" inputmode="decimal" dir="ltr" aria-label="' + esc(t("ship_cost_for", { zone: label })) + '" placeholder="' + esc(t("cost")) + '" value="' + (cur ? cur.c : "") + '">' +
+        '<input class="inp" id="sD_' + zn + '" maxlength="20" aria-label="' + esc(t("ship_days_for", { zone: label })) + '" placeholder="' + esc(t("days_placeholder")) + '" value="' + esc(cur ? cur.d : "") + '"></div>';
+    }
+
+    var b = '<div class="box"><div class="note">' + t("sell_safety_short") + ' <button class="linkbtn" type="button" id="sSafety">' + t("privacy_title") + "</button></div></div>" +
+      '<form id="sellForm" novalidate style="display:flex;flex-direction:column;gap:16px">' +
+      '<div class="note">' + t("selling_as", { kind: t(sellerType === "gewerbe" ? "seller_pro" : "seller_private"), country: esc(cname(country)) }) + "</div>" +
+      '<div class="field"><label for="sTitle">' + t("title") + '</label><input class="inp" id="sTitle" maxlength="90" dir="auto"><span class="hint">' + t("title_hint") + "</span></div>" +
+      '<div class="two"><div class="field"><label for="sCat">' + t("category") + '</label><select class="inp" id="sCat">' + catOpts + '</select></div>' +
+      '<div class="field"><label for="sCond">' + t("condition") + '</label><select class="inp" id="sCond">' + condOpts + "</select></div></div>" +
+      typeField +
+      '<div class="field"><label for="sCur">' + t("currency") + '</label><select class="inp" id="sCur"' + (ed ? " disabled" : "") + ">" + curOpts + "</select></div>" +
+      '<div id="secAuction" class="two"><div class="field"><label for="sStart">' + t("start_price") + '</label><input class="inp mono" id="sStart" type="text" inputmode="decimal" dir="ltr"></div>' +
+      '<div class="field"><label for="sBuy">' + t("buy_now_price") + '</label><input class="inp mono" id="sBuy" type="text" inputmode="decimal" dir="ltr" placeholder="—"><span class="hint">' + t("buy_now_hint") + "</span></div>" +
+      (ed ? "" : '<div class="field"><label for="sDur">' + t("duration") + '</label><select class="inp" id="sDur">' + [1, 3, 5, 7, 10].map(function (d) { return '<option value="' + d * 1440 + '"' + (d === 7 ? " selected" : "") + ">" + t("n_days", { n: num(d) }) + "</option>"; }).join("") + "</select></div>") + "</div>" +
+      '<div id="secFixed" class="two"><div class="field"><label for="sPrice">' + t("price_each") + '</label><input class="inp mono" id="sPrice" type="text" inputmode="decimal" dir="ltr"></div>' +
+      '<div class="field"><label for="sStockF">' + t("stock_count") + '</label><input class="inp mono" id="sStockF" type="text" inputmode="numeric" dir="ltr" value="1"></div></div>' +
+      '<fieldset id="secWhs"><legend>' + t("type_wholesale") + "</legend>" +
+      '<div class="two"><div class="field"><label for="sUnit">' + t("unit") + '</label><select class="inp" id="sUnit">' + unitOpts + '</select></div>' +
+      '<div class="field"><label for="sStockW">' + t("stock_qty") + '</label><input class="inp mono" id="sStockW" type="text" inputmode="numeric" dir="ltr"></div></div>' +
+      '<div class="flabel">' + t("tier_prices") + '</div><span class="hint" style="margin-top:-6px">' + t("tier_hint") + "</span>" +
+      [1, 2, 3].map(function (i) {
+        return '<div class="trow"><div class="field"><label for="sTm' + i + '">' + (i === 1 ? t("min_qty") : t("tier_from", { n: num(i) })) + '</label><input class="inp mono" id="sTm' + i + '" type="text" inputmode="numeric" dir="ltr"' + (i > 1 ? ' placeholder="—"' : "") + "></div>" +
+          '<div class="field"><label for="sTp' + i + '">' + t("price_per_unit") + '</label><input class="inp mono" id="sTp' + i + '" type="text" inputmode="decimal" dir="ltr"' + (i > 1 ? ' placeholder="—"' : "") + "></div></div>";
+      }).join("") + "</fieldset>" +
+      '<fieldset><legend>' + t("payment_methods") + '</legend><span class="hint">' + t("payment_methods_hint") + "</span>" +
+      PAYS.map(function (p) { return '<label class="check"><input type="checkbox" id="sPay_' + p + '"' + (pays.indexOf(p) > -1 ? " checked" : "") + "> " + t("pay_" + p) + "</label>"; }).join("") + "</fieldset>" +
+      '<fieldset><legend>' + t("delivery") + '</legend><span class="hint">' + t("delivery_hint") + "</span>" +
+      zoneRow("inland") + (isEU ? zoneRow("eu") : "") + zoneRow("welt") +
+      '<label class="check"><input type="checkbox" id="sPickup"' + (ed ? (ed.pickup ? " checked" : "") : " checked") + "> " + t("pickup_possible") + "</label></fieldset>" +
+      (isAF ? '<div class="field"><label for="sLoc">' + t("province") + '</label><select class="inp" id="sLoc"><option value="">—</option>' + provOpts(ed ? ed.loc : me.loc) + '</select><span class="hint">' + t("province_hint") + "</span></div>"
+        : '<div class="field"><label for="sLoc">' + t("city") + '</label><input class="inp" id="sLoc" maxlength="80" dir="auto"><span class="hint">' + t("province_hint") + "</span></div>") +
+      '<div class="field"><label for="sDesc">' + t("description") + '</label><textarea class="inp" id="sDesc" rows="4" maxlength="4000" dir="auto"></textarea><span class="hint">' + t("desc_hint") + "</span></div>" +
+      '<div class="field"><span class="flabel">' + t("photo") + '</span><div class="drop"><div class="prev" id="sPrev"></div><div style="min-width:0"><input id="sImg" type="file" accept="image/*"><div class="hint">' + t("photo_hint") + "</div></div></div></div>" +
+      '<div class="err" id="sErr" hidden></div></form>';
+
+    openSheet(t(ed ? "edit_listing" : "new_listing"), b, '<button class="btn" type="button" id="sCancel">' + t("cancel") + '</button><button class="btn primary" type="button" id="sSubmit">' + t(ed ? "save_changes" : "publish") + "</button>", "sell");
+    $("sSafety").addEventListener("click", function () { openSafety(); });
+
+    function applyType() {
+      $("secAuction").hidden = type !== "auction";
+      $("secFixed").hidden = type !== "fixed";
+      $("secWhs").hidden = type !== "wholesale";
+    }
+    if (!isAF) $("sLoc").value = ed ? ed.loc : (PROVINCES.some(function (p) { return p[0] === me.loc; }) ? "" : me.loc);
+    if (ed) {
+      $("sTitle").value = ed.title; $("sCat").value = catOf(ed.cat).id; $("sCond").value = CONDS.indexOf(ed.cond) > -1 ? ed.cond : "good"; $("sDesc").value = ed.desc || "";
+      if (type === "auction") { $("sStart").value = ed.start; if (ed.buyNow) $("sBuy").value = ed.buyNow; }
+      if (type === "fixed") { $("sPrice").value = ed.price; $("sStockF").value = ed.stock; }
+      if (type === "wholesale") {
+        $("sUnit").value = ed.unit; $("sStockW").value = ed.stock;
+        ed.tiers.forEach(function (x, i) { $("sTm" + (i + 1)).value = x.min; $("sTp" + (i + 1)).value = x.price; });
+      }
+      if (ed.img) $("sPrev").innerHTML = '<img src="' + esc(ed.img) + '" alt="">';
+    } else {
+      $("sType").addEventListener("click", function (e) {
+        var x = e.target.closest("[data-st]"); if (!x || x.disabled) return;
+        type = x.getAttribute("data-st");
+        $("sType").querySelectorAll("button").forEach(function (bb) { bb.setAttribute("aria-pressed", String(bb === x)); });
+        applyType();
+      });
+    }
+    applyType();
+    $("sImg").addEventListener("change", function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      shrink(f, function (blob, url) {
+        if (!blob) { toast(t("err_image_read")); return; }
+        draftFile = blob; $("sPrev").innerHTML = '<img src="' + url + '" alt="">';
+      });
+    });
+    $("sCancel").addEventListener("click", function () { if (ed) openDetail(ed.id); else closeSheet(); });
+    $("sSubmit").addEventListener("click", function () { submitSell(type, ed, country); });
+    $("sTitle").focus();
+  }
+  function shrink(file, cb) {
+    var r = new FileReader();
+    r.onerror = function () { cb(null); };
+    r.onload = function () {
+      var img = new Image();
+      img.onerror = function () { cb(null); };
+      img.onload = function () {
+        var max = 800, w = img.width, h = img.height, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        try { var url = c.toDataURL("image/jpeg", 0.7); c.toBlob(function (blob) { cb(blob, url); }, "image/jpeg", 0.7); } catch (e) { cb(null); }
+      };
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  }
+  function uploadImage(blob) {
+    var path = uid + "/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + ".jpg";
+    return sb.storage.from("listing-images").upload(path, blob, { contentType: "image/jpeg" }).then(function (r) {
+      if (r.error) throw r.error;
+      return sb.storage.from("listing-images").getPublicUrl(path).data.publicUrl;
+    });
+  }
+  function submitSell(type, ed, country) {
+    var errs = [];
+    function mark(id, bad, msg) { var el = $(id); if (el) el.classList.toggle("bad", !!bad); if (bad) errs.push(msg); }
+    function isInt(v) { return isFinite(v) && v === Math.floor(v); }
+    document.querySelectorAll("#sellForm .bad").forEach(function (el) { el.classList.remove("bad"); });
+
+    var title = $("sTitle").value.trim(), loc = $("sLoc").value.trim();
+    mark("sTitle", title.length < 3, t("v_title"));
+
+    var data = {};
+    if (type === "auction") {
+      var st = parseNum($("sStart").value), buyRaw = String($("sBuy").value).trim(), buy = buyRaw ? parseNum(buyRaw) : 0;
+      mark("sStart", !(isFinite(st) && st >= 1), t("v_start"));
+      mark("sBuy", buyRaw && !(isFinite(buy) && isFinite(st) && buy > st), t("v_buynow"));
+      data = { start_price: round2(st), buy_now: buyRaw ? round2(buy) : null };
+    } else if (type === "fixed") {
+      var pr = parseNum($("sPrice").value), sk = parseNum($("sStockF").value);
+      mark("sPrice", !(isFinite(pr) && pr > 0), t("v_price"));
+      mark("sStockF", !(isInt(sk) && sk >= (ed ? 0 : 1)), t("v_stock"));
+      data = { price: round2(pr), stock: sk };
+    } else {
+      var tiers = [], tierBad = false;
+      [1, 2, 3].forEach(function (i) {
+        var mRaw = String($("sTm" + i).value).trim(), pRaw = String($("sTp" + i).value).trim();
+        if (i > 1 && !mRaw && !pRaw) return;
+        var m = parseNum(mRaw), p = parseNum(pRaw), prev = tiers[tiers.length - 1];
+        var ok = mRaw && pRaw && isInt(m) && m >= 1 && isFinite(p) && p > 0 && (!prev || (m > prev.min && p < prev.price));
+        if (!ok) { tierBad = true; $("sTm" + i).classList.add("bad"); $("sTp" + i).classList.add("bad"); }
+        else tiers.push({ min: m, price: round2(p) });
+      });
+      if (tierBad || !tiers.length) errs.push(t("v_tiers"));
+      var sw = parseNum($("sStockW").value);
+      mark("sStockW", !(isInt(sw) && tiers.length && sw >= tiers[0].min), t("v_stock_moq"));
+      data = { tiers: tiers, stock: sw, unit: $("sUnit").value };
+    }
+
+    var pays = PAYS.filter(function (p) { return $("sPay_" + p).checked; });
+    if (!pays.length) errs.push(t("v_pay"));
+
+    var ship = { inland: null, eu: null, welt: null }, anyZone = false;
+    ZONES.forEach(function (zn) {
+      var box = $("sZ_" + zn); if (!box || !box.checked) return;
+      var cst = parseNum($("sC_" + zn).value || "0");
+      if (!(isFinite(cst) && cst >= 0)) { mark("sC_" + zn, true, t("v_ship_cost")); return; }
+      ship[zn] = { c: round2(cst), d: $("sD_" + zn).value.trim().slice(0, 20) }; anyZone = true;
+    });
+    var pickup = $("sPickup").checked;
+    if (!anyZone && !pickup) errs.push(t("v_delivery"));
+    mark("sLoc", !loc, t(country === "AF" ? "v_province" : "v_city"));
+
+    if (errs.length) { $("sErr").textContent = t("please_check") + " " + errs.join(sep()); $("sErr").hidden = false; $("sErr").scrollIntoView({ block: "nearest" }); return; }
+
+    var row = { title: title, cat: $("sCat").value, cond: $("sCond").value, loc: loc, descr: $("sDesc").value.trim(), ship: ship, pickup: pickup, pay_methods: pays };
+    Object.keys(data).forEach(function (k) { row[k] = data[k]; });
+    if (!ed) {
+      row.type = type; row.country = country; row.currency = $("sCur").value;
+      if (type === "auction") row.ends_at = new Date(Date.now() + parseInt($("sDur").value, 10) * MIN).toISOString();
+    }
+    var btn = $("sSubmit"); busy(btn, true, t(draftFile ? "uploading_photo" : "saving"));
+    var p = draftFile ? uploadImage(draftFile) : Promise.resolve(null);
+    p.then(function (url) {
+      if (url) row.img_url = url;
+      busy(btn, true, t("saving"));
+      return ed ? sb.from("listings").update(row).eq("id", ed.id).select("id").single() : sb.from("listings").insert(row).select("id").single();
+    }).then(function (r) {
+      if (r.error) throw r.error;
+      var id = r.data.id;
+      if (!ed) { ui.view = "browse"; ui.sort = "new"; }
+      toast(t(ed ? "changes_saved" : "listing_published"));
+      return refresh().then(function () { openDetail(id); });
+    }).catch(function (e) {
+      busy(btn, false, t(ed ? "save_changes" : "publish"));
+      $("sErr").textContent = errMsg(e); $("sErr").hidden = false; $("sErr").scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  /* ---------- Misc ---------- */
+  var toastT;
+  function toast(m) { var el = $("toast"); el.textContent = m; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { el.hidden = true; }, 4000); }
+
+  var endedSeen = {};
+  setInterval(function () {
+    var now = Date.now(), changed = false;
+    document.querySelectorAll("[data-end]").forEach(function (el) {
+      var ms = +el.getAttribute("data-end") - now;
+      el.textContent = left(ms);
+      el.className = "left " + (ms <= 0 ? "over" : ms < 10 * MIN ? "soon" : "");
+    });
+    listings.forEach(function (l) { if (ended(l) && !endedSeen[l.id]) { endedSeen[l.id] = 1; changed = true; } });
+    if (changed && loaded) {
+      render();
+      if (sheetMode === "detail" && sheetId) { var y = $("sheetBody").scrollTop; openDetail(sheetId); $("sheetBody").scrollTop = y; }
+    }
+  }, 1000);
+  setInterval(function () { if ($("sheet").hidden && document.visibilityState === "visible") refresh(); }, 60000);
+
+  sb.auth.onAuthStateChange(function (event, session) {
+    var newUid = session && session.user ? session.user.id : null;
+    userEmail = session && session.user ? session.user.email : "";
+    if (event === "PASSWORD_RECOVERY") { uid = newUid; setTimeout(function () { openAuth("newpass"); }, 0); }
+    if (newUid !== uid || event === "SIGNED_IN" || event === "USER_UPDATED") {
+      uid = newUid;
+      setTimeout(function () { refresh(); }, 0);
+    }
+  });
+
+  applyLang();
+  renderHeader();
+  sb.auth.getSession().then(function (r) {
+    var s = r.data && r.data.session;
+    uid = s ? s.user.id : null; userEmail = s ? s.user.email : "";
+    return refresh();
+  }).then(function () {
+    listings.forEach(function (l) { if (ended(l)) endedSeen[l.id] = 1; });
+    if (/type=signup|type=recovery|access_token/.test(location.hash)) {
+      try { history.replaceState(null, "", location.pathname); } catch (e) {}
+      if (uid) toast(t("email_confirmed"));
+    }
+    if (/error_description=/.test(location.hash)) { toast(t("link_invalid")); try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+  });
+})();
+
+</script>
+</body>
+</html>

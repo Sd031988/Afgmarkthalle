@@ -1,0 +1,36 @@
+<div class="proto" data-t="proto_banner"></div>
+
+<header class="top">
+  <div class="top-in">
+    <button class="logo" id="logo" type="button"><span data-t="site_name"></span><small data-t="tagline"></small></button>
+    <form class="search" id="searchForm" role="search">
+      <input id="q" type="search" data-tp="search_ph" data-ta="search_ph" autocomplete="off">
+      <select id="catSel" data-ta="categories"></select>
+    </form>
+    <div class="pickers">
+      <label class="shipto" for="shipTo"><span data-t="ship_to"></span><select id="shipTo"></select></label>
+      <label class="shipto" for="langSel"><span data-t="language"></span><select id="langSel"></select></label>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="accBtn" type="button"><span id="accLbl"></span><span class="dot" id="accDot" hidden></span></button>
+      <button class="btn" id="cartBtn" type="button"><span data-t="cart"></span> <span class="count" id="cartCount">0</span></button>
+      <button class="btn primary" id="sellBtn" type="button" data-t="sell"></button>
+    </div>
+  </div>
+  <nav class="cats" id="cats" data-ta="categories"></nav>
+</header>
+
+<main id="main"><div class="empty"><b>…</b></div></main>
+
+<footer>
+  <span data-t="footer_text"></span>
+  <button class="linkbtn" id="safetyBtn" type="button" data-t="privacy_title"></button>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-h"><h2 id="sheetTitle"></h2><button class="x" id="sheetClose" type="button" aria-label="×">×</button></div>
+  <div class="sheet-b" id="sheetBody"></div>
+  <div class="sheet-f" id="sheetFoot" hidden></div>
+</aside>
+<div class="toast" id="toast" hidden role="status"></div>
