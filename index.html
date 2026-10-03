@@ -1202,10 +1202,10 @@ window.MH_cleanVideo = function (buffer) {
       sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false }),
       sb.rpc("is_admin")
     ]).then(function (r) {
-      for (var i = 0; i < r.length; i++) if (r[i].error) throw r[i].error;
+      for (var i = 0; i < 5; i++) if (r[i].error) throw r[i].error;
       me = r[0].data;
       watchSet = {}; r[1].data.forEach(function (w) { watchSet[w.listing_id] = true; });
-      convs = r[2].data; purchases = r[3].data; sales = r[4].data; isAdmin = r[5].data === true;
+      convs = r[2].data; purchases = r[3].data; sales = r[4].data; isAdmin = !r[5].error && r[5].data === true;
     });
   }
   function refresh() {
