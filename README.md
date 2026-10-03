@@ -1,4 +1,4 @@
-# Markthalle
+# Bazar (بازار)
 
 Online-Marktplatz für kleine Geschäfte und Heimarbeit in Afghanistan. Verkauft wird im Land und an Käufer im Ausland.
 
