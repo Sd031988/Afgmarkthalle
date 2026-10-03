@@ -71,6 +71,7 @@
   /* ---------- State ---------- */
   var uid = null, me = null, userEmail = "";
   var listings = [], watchSet = {}, convs = [], purchases = [], sales = [];
+  var posts = [], postsLoaded = false, postsError = "", isAdmin = false;
   var loaded = false, loadError = "";
   var ui = { q: "", cat: "", type: "all", seller: "all", origin: "all", deliverOnly: true, sort: "new", view: "browse", tab: "listings" };
 
@@ -122,6 +123,8 @@
     if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return t("err_network");
     if (/permission denied|JWT|not authenticated/i.test(m)) return t("err_login");
     if (/payload too large|exceeded the maximum/i.test(m)) return t("err_image_size");
+    if (/posts_duration_check/i.test(m)) return t("err_video_long");
+    if (/mime type|not supported/i.test(m)) return t("err_video_type");
     return m || t("err_unknown");
   }
   var HEART_PATH = '<path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.4 3.5 4.3 6.7-1.7 4.7-9.2 9.3-9.2 9.3z"/>';
@@ -152,23 +155,24 @@
       });
   }
   function loadMine() {
-    if (!uid) { me = null; watchSet = {}; convs = []; purchases = []; sales = []; return Promise.resolve(); }
+    if (!uid) { me = null; watchSet = {}; convs = []; purchases = []; sales = []; isAdmin = false; return Promise.resolve(); }
     return Promise.all([
       sb.rpc("my_profile"),
       sb.from("watch").select("listing_id"),
       sb.from("conversations").select("*, buyer:profiles!conversations_buyer_id_fkey(display_name), seller:profiles!conversations_seller_id_fkey(display_name)").order("last_at", { ascending: false }),
       sb.from("orders").select("*, order_items(*), seller:profiles!orders_seller_id_fkey(display_name)").eq("buyer_id", uid).order("created_at", { ascending: false }),
-      sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false })
+      sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false }),
+      sb.rpc("is_admin")
     ]).then(function (r) {
       for (var i = 0; i < r.length; i++) if (r[i].error) throw r[i].error;
       me = r[0].data;
       watchSet = {}; r[1].data.forEach(function (w) { watchSet[w.listing_id] = true; });
-      convs = r[2].data; purchases = r[3].data; sales = r[4].data;
+      convs = r[2].data; purchases = r[3].data; sales = r[4].data; isAdmin = r[5].data === true;
     });
   }
   function refresh() {
     return Promise.resolve()
-      .then(function () { return Promise.all([loadListings(), loadMine()]); })
+      .then(function () { return Promise.all([loadListings(), loadMine(), ui.view === "ads" ? loadPosts() : null]); })
       .catch(function (e) { loadError = errMsg(e); })
       .then(render);
   }
@@ -281,12 +285,15 @@
   $("searchForm").addEventListener("submit", function (e) { e.preventDefault(); ui.view = "browse"; render(); });
   $("logo").addEventListener("click", function () {
     ui.q = ""; ui.cat = ""; ui.type = "all"; ui.seller = "all"; ui.origin = "all"; ui.deliverOnly = true; ui.sort = "new"; ui.view = "browse";
+    pauseVideos();
     $("q").value = ""; renderHeader(); render();
   });
   $("accBtn").addEventListener("click", function () { if (needLogin()) return; ui.view = "account"; render(); });
   $("cartBtn").addEventListener("click", function () { openCart(); });
   $("sellBtn").addEventListener("click", function () { if (needLogin("login_to_sell")) return; openSell(); });
   $("safetyBtn").addEventListener("click", function () { openSafety(); });
+  $("vOffers").addEventListener("click", function () { ui.view = "browse"; render(); });
+  $("vAds").addEventListener("click", function () { ui.view = "ads"; render(); if (!postsLoaded) loadPosts().then(render); });
 
   /* ---------- Browse ---------- */
   function filtered() {
@@ -573,7 +580,13 @@
     $("cartCount").textContent = num(local.cart.length);
     $("accLbl").textContent = uid ? t("my_area") : t("login");
     $("accDot").hidden = !(uid && unreadCount());
-    if (ui.view === "account" && uid) renderAccount(); else { ui.view = "browse"; renderBrowse(); }
+    $("vOffers").setAttribute("aria-pressed", String(ui.view !== "ads"));
+    $("vAds").setAttribute("aria-pressed", String(ui.view === "ads"));
+    $("cats").hidden = ui.view === "ads";
+    document.documentElement.classList.toggle("ads-view", ui.view === "ads");
+    if (ui.view === "account" && uid) renderAccount();
+    else if (ui.view === "ads") renderAds();
+    else { ui.view = "browse"; renderBrowse(); }
   }
 
   /* ---------- Sheet ---------- */
@@ -589,6 +602,7 @@
     $("sheetClose").focus();
   }
   function closeSheet() {
+    pauseVideos();
     $("scrim").hidden = true; $("sheet").hidden = true; sheetMode = null; sheetId = null;
     if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {}
   }
@@ -1205,6 +1219,213 @@
     }).catch(function (e) {
       busy(btn, false, t(ed ? "save_changes" : "publish"));
       $("sErr").textContent = errMsg(e); $("sErr").hidden = false; $("sErr").scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  /* ---------- Ads (Werbung) ---------- */
+  var MAX_VIDEO_BYTES = 15 * 1024 * 1024, MAX_VIDEO_SECONDS = 30, MAX_PHOTOS = 4;
+  function loadPosts() {
+    return sb.from("posts")
+      .select("*, author:profiles!posts_author_id_fkey(display_name), listing:listings(id,title)")
+      .order("created_at", { ascending: false }).limit(100)
+      .then(function (r) { if (r.error) throw r.error; posts = r.data; postsLoaded = true; postsError = ""; })
+      .catch(function (e) { postsError = errMsg(e); postsLoaded = true; });
+  }
+  function pauseVideos() { document.querySelectorAll("video").forEach(function (v) { try { v.pause(); } catch (e) {} }); }
+  function postMedia(p) {
+    var m = p.media || [];
+    if (p.kind === "video" && m[0]) {
+      return '<div class="pmedia"><video controls playsinline preload="none"' + (m[0].poster ? ' poster="' + esc(m[0].poster) + '"' : "") + ' src="' + esc(m[0].url) + '"></video></div>';
+    }
+    if (!m.length) return "";
+    return '<div class="pmedia photos" data-photos="' + p.id + '"><img src="' + esc(m[0].url) + '" alt="" loading="lazy" decoding="async">' +
+      (m.length > 1 ? '<span class="pcount">' + t("n_photos", { n: num(m.length) }) + "</span>" : "") + "</div>";
+  }
+  function postHTML(p) {
+    var own = uid && p.author_id === uid;
+    var acts = "";
+    if (p.listing) acts += '<button class="btn sm" type="button" data-open="' + p.listing.id + '">' + t("ad_to_listing") + "</button>";
+    if (!own) acts += '<button class="btn sm ghost" type="button" data-report="' + p.id + '">' + t("ad_report") + "</button>";
+    if (isAdmin && !own) acts += '<button class="btn sm" type="button" data-hide="' + p.id + '" data-v="' + (p.hidden ? "0" : "1") + '">' + t(p.hidden ? "ad_show" : "ad_hide") + "</button>";
+    if (own || isAdmin) acts += '<button class="btn sm danger" type="button" data-pdel="' + p.id + '">' + t("ad_delete") + "</button>";
+    return '<article class="post' + (p.hidden ? " is-hidden" : "") + '">' + postMedia(p) +
+      '<div class="post-b">' +
+      '<div class="row"><b>' + esc(p.author ? p.author.display_name : "?") + '</b><span class="note">' + fmtDate(p.created_at) + "</span></div>" +
+      (p.hidden ? '<div><span class="tag sold">' + t("ad_hidden_badge") + "</span>" + (p.reports ? ' <span class="note">' + t("ad_reports_n", { n: num(p.reports) }) + "</span>" : "") + "</div>" : "") +
+      (p.caption ? '<p class="desc" dir="auto">' + esc(p.caption) + "</p>" : "") +
+      '<div class="li-acts" style="justify-content:flex-start">' + acts + "</div></div></article>";
+  }
+  function renderAds() {
+    var h = '<div class="bar"><div><h1>' + t("ads_title") + '</h1><div class="sub">' + t("ads_sub") + "</div></div>" +
+      '<div class="controls"><button class="btn primary" type="button" id="newAd">' + t("ads_new") + "</button></div></div>";
+    if (!postsLoaded) h += '<div class="empty"><b>' + t("loading") + "</b></div>";
+    else if (postsError) h += '<div class="empty"><b>' + t("load_listings_fail") + "</b>" + esc(postsError) + "</div>";
+    else if (!posts.length) h += '<div class="empty"><b>' + t("ads_empty_title") + "</b>" + t("ads_empty_body") + "</div>";
+    else h += '<div class="feed">' + posts.map(postHTML).join("") + "</div>";
+    $("main").innerHTML = h;
+    $("newAd").addEventListener("click", function () { if (needLogin("login_to_post")) return; openNewAd(); });
+    // only one video plays at a time
+    $("main").querySelectorAll("video").forEach(function (v) {
+      v.addEventListener("play", function () { $("main").querySelectorAll("video").forEach(function (o) { if (o !== v) o.pause(); }); });
+    });
+  }
+  function storagePath(url) { var i = url.indexOf("/ad-media/"); return i > -1 ? decodeURIComponent(url.slice(i + 10)) : null; }
+  $("main").addEventListener("click", function (e) {
+    var ph = e.target.closest("[data-photos]");
+    if (ph) {
+      var p = posts.filter(function (x) { return x.id === ph.getAttribute("data-photos"); })[0];
+      if (p) openSheet(t("ads_title"), p.media.map(function (m) { return '<img class="fullimg" src="' + esc(m.url) + '" alt="">'; }).join("") + (p.caption ? '<p class="desc" dir="auto">' + esc(p.caption) + "</p>" : ""), "", "photos");
+      return;
+    }
+    var rp = e.target.closest("[data-report]"); if (rp) { if (needLogin("login_to_report")) return; openReport(rp.getAttribute("data-report")); return; }
+    var hd = e.target.closest("[data-hide]");
+    if (hd) {
+      hd.disabled = true;
+      sb.rpc("admin_set_hidden", { p_post: hd.getAttribute("data-hide"), p_hidden: hd.getAttribute("data-v") === "1" })
+        .then(function (r) { if (r.error) throw r.error; return loadPosts().then(render); })
+        .catch(function (err) { hd.disabled = false; toast(errMsg(err)); });
+      return;
+    }
+    var pd = e.target.closest("[data-pdel]");
+    if (pd) {
+      if (pd.getAttribute("data-confirm") !== "1") { pd.setAttribute("data-confirm", "1"); pd.textContent = t("confirm_delete"); return; }
+      pd.disabled = true;
+      var id = pd.getAttribute("data-pdel"), post = posts.filter(function (x) { return x.id === id; })[0];
+      sb.from("posts").delete().eq("id", id).select("id").then(function (r) {
+        if (r.error) throw r.error;
+        if (!r.data.length) throw new Error(t("err_not_found"));
+        var paths = [];
+        (post && post.media || []).forEach(function (m) { [m.url, m.poster].forEach(function (u) { var sp = u && storagePath(u); if (sp) paths.push(sp); }); });
+        if (paths.length) sb.storage.from("ad-media").remove(paths).then(function () {}, function () {});
+        toast(t("ad_deleted")); return loadPosts().then(render);
+      }).catch(function (err) { pd.disabled = false; toast(errMsg(err)); });
+    }
+  });
+  function openReport(pid) {
+    var reasons = ["spam", "unsafe", "offensive", "other"];
+    openSheet(t("report_title"), '<p class="note" style="margin:0">' + t("report_intro") + "</p>" +
+      reasons.map(function (r, i) { return '<label class="check"><input type="radio" name="rReason" value="' + r + '"' + (i === 0 ? " checked" : "") + "> " + t("reason_" + r) + "</label>"; }).join("") +
+      '<div class="err" id="rErr" hidden></div>',
+      '<button class="btn" type="button" id="rCancel">' + t("cancel") + '</button><button class="btn primary" type="button" id="rSend">' + t("ad_report") + "</button>", "report", pid);
+    $("rCancel").addEventListener("click", closeSheet);
+    $("rSend").addEventListener("click", function () {
+      var reason = document.querySelector('input[name="rReason"]:checked').value;
+      busy($("rSend"), true);
+      sb.rpc("report_post", { p_post: pid, p_reason: reason }).then(function (r) {
+        if (r.error) throw r.error; closeSheet(); toast(t("reported")); return loadPosts().then(render);
+      }).catch(function (err) { busy($("rSend"), false); $("rErr").textContent = errMsg(err); $("rErr").hidden = false; });
+    });
+  }
+  function readVideoMeta(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file), v = document.createElement("video"), done = false;
+      v.preload = "metadata"; v.muted = true; v.playsInline = true;
+      function finish(res) { if (done) return; done = true; resolve(res); }
+      v.onloadedmetadata = function () {
+        var dur = v.duration;
+        // Vorschaubild aus dem Video holen
+        v.currentTime = Math.min(1, isFinite(dur) ? dur / 4 : 0.5);
+        v.onseeked = function () {
+          try {
+            var max = 640, k = Math.min(1, max / Math.max(v.videoWidth || 1, v.videoHeight || 1));
+            var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(v.videoWidth * k)); c.height = Math.max(1, Math.round(v.videoHeight * k));
+            c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+            c.toBlob(function (blob) { URL.revokeObjectURL(url); finish({ duration: dur, poster: blob, w: v.videoWidth, h: v.videoHeight }); }, "image/jpeg", 0.7);
+          } catch (e) { URL.revokeObjectURL(url); finish({ duration: dur, poster: null }); }
+        };
+        setTimeout(function () { finish({ duration: dur, poster: null }); }, 4000);
+      };
+      v.onerror = function () { URL.revokeObjectURL(url); finish(null); };
+      v.src = url;
+    });
+  }
+  function uploadAd(path, blob, type) {
+    return sb.storage.from("ad-media").upload(path, blob, { contentType: type }).then(function (r) {
+      if (r.error) throw r.error;
+      return sb.storage.from("ad-media").getPublicUrl(path).data.publicUrl;
+    });
+  }
+  function openNewAd() {
+    var mine = listings.filter(isMine);
+    var b = '<div class="box warnbox"><div class="note">' + t("ad_safety") + "</div></div>" +
+      '<form id="adForm" novalidate style="display:flex;flex-direction:column;gap:14px">' +
+      '<div class="field"><span class="flabel">' + t("ad_kind") + '</span><div class="seg" role="group" id="adKind"><button type="button" data-k="video" aria-pressed="true">' + t("ad_kind_video") + '</button><button type="button" data-k="photos" aria-pressed="false">' + t("ad_kind_photos") + "</button></div></div>" +
+      '<div class="field" id="adVideoWrap"><label for="adVideo">' + t("ad_kind_video") + '</label><input id="adVideo" type="file" accept="video/mp4,video/quicktime,.mp4,.mov"><span class="hint">' + t("ad_video_hint") + '</span><div class="note" id="adVideoInfo"></div></div>' +
+      '<div class="field" id="adPhotosWrap" hidden><label for="adPhotos">' + t("ad_kind_photos") + '</label><input id="adPhotos" type="file" accept="image/*" multiple><span class="hint">' + t("ad_photos_hint") + '</span><div class="thumbs" id="adThumbs"></div></div>' +
+      '<div class="field"><label for="adCaption">' + t("ad_caption") + '</label><textarea class="inp" id="adCaption" rows="3" maxlength="500" dir="auto"></textarea><span class="hint">' + t("ad_caption_hint") + "</span></div>" +
+      (mine.length ? '<div class="field"><label for="adLink">' + t("ad_link") + '</label><select class="inp" id="adLink"><option value="">' + t("ad_no_link") + "</option>" + mine.map(function (l) { return '<option value="' + l.id + '">' + esc(l.title) + "</option>"; }).join("") + "</select></div>" : "") +
+      '<div class="err" id="adErr" hidden></div></form>';
+    openSheet(t("ad_new_title"), b, '<button class="btn" type="button" id="adCancel">' + t("cancel") + '</button><button class="btn primary" type="button" id="adSubmit">' + t("ad_publish") + "</button>", "newad");
+    var kind = "video", video = null, photos = [];
+    $("adKind").addEventListener("click", function (e) {
+      var x = e.target.closest("[data-k]"); if (!x) return;
+      kind = x.getAttribute("data-k");
+      $("adKind").querySelectorAll("button").forEach(function (bb) { bb.setAttribute("aria-pressed", String(bb === x)); });
+      $("adVideoWrap").hidden = kind !== "video"; $("adPhotosWrap").hidden = kind !== "photos";
+    });
+    function fail(m) { $("adErr").textContent = m; $("adErr").hidden = false; }
+    $("adVideo").addEventListener("change", function () {
+      video = null; $("adErr").hidden = true; $("adVideoInfo").textContent = "";
+      var f = this.files && this.files[0]; if (!f) return;
+      var okType = /^video\/(mp4|quicktime)$/.test(f.type) || /\.(mp4|mov)$/i.test(f.name);
+      if (!okType) return fail(t("err_video_type"));
+      if (f.size > MAX_VIDEO_BYTES) return fail(t("err_video_size"));
+      $("adVideoInfo").textContent = t("preparing");
+      readVideoMeta(f).then(function (meta) {
+        if (!meta || !isFinite(meta.duration) || meta.duration <= 0) { $("adVideoInfo").textContent = ""; return fail(t("err_video_read")); }
+        if (meta.duration > MAX_VIDEO_SECONDS + 0.5) { $("adVideoInfo").textContent = ""; return fail(t("err_video_long")); }
+        video = { file: f, meta: meta };
+        $("adVideoInfo").textContent = t("video_info", { s: num(Math.round(meta.duration)), mb: num(Math.round(f.size / 104857.6) / 10) });
+      });
+    });
+    $("adPhotos").addEventListener("change", function () {
+      photos = []; $("adErr").hidden = true; $("adThumbs").innerHTML = "";
+      var files = Array.prototype.slice.call(this.files || []);
+      if (!files.length) return;
+      if (files.length > MAX_PHOTOS) return fail(t("err_photos_count"));
+      files.forEach(function (f, i) {
+        shrink(f, function (blob, url) {
+          if (!blob) { fail(t("err_image_read")); return; }
+          photos[i] = blob;
+          $("adThumbs").insertAdjacentHTML("beforeend", '<img src="' + url + '" alt="">');
+        });
+      });
+    });
+    $("adCancel").addEventListener("click", closeSheet);
+    $("adSubmit").addEventListener("click", function () {
+      $("adErr").hidden = true;
+      var caption = $("adCaption").value.trim(), link = $("adLink") ? $("adLink").value : "";
+      var btn = $("adSubmit"), base = uid + "/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      var job;
+      if (kind === "video") {
+        if (!video) return fail(t("err_media_missing"));
+        busy(btn, true, t("preparing"));
+        job = video.file.arrayBuffer().then(function (buf) {
+          var clean = window.MH_cleanVideo(buf);
+          if (!clean.ok) throw new Error(t("err_video_read"));
+          var isMov = /quicktime/.test(video.file.type) || /\.mov$/i.test(video.file.name);
+          var type = isMov ? "video/quicktime" : "video/mp4";
+          busy(btn, true, t("uploading_video"));
+          return uploadAd(base + (isMov ? ".mov" : ".mp4"), new Blob([clean.data], { type: type }), type).then(function (vurl) {
+            if (!video.meta.poster) return { url: vurl, type: type };
+            return uploadAd(base + "-poster.jpg", video.meta.poster, "image/jpeg").then(function (purl) { return { url: vurl, type: type, poster: purl }; });
+          });
+        }).then(function (item) {
+          return sb.from("posts").insert({ kind: "video", media: [item], caption: caption, listing_id: link || null, duration: Math.round(video.meta.duration * 10) / 10 }).select("id").single();
+        });
+      } else {
+        var ready = photos.filter(Boolean);
+        if (!ready.length) return fail(t("err_media_missing"));
+        if (ready.length > MAX_PHOTOS) return fail(t("err_photos_count"));
+        busy(btn, true, t("uploading_photos"));
+        job = Promise.all(ready.map(function (blob, i) { return uploadAd(base + "-" + i + ".jpg", blob, "image/jpeg"); })).then(function (urls) {
+          return sb.from("posts").insert({ kind: "photos", media: urls.map(function (u) { return { url: u, type: "image/jpeg" }; }), caption: caption, listing_id: link || null }).select("id").single();
+        });
+      }
+      job.then(function (r) {
+        if (r.error) throw r.error;
+        closeSheet(); toast(t("ad_published")); ui.view = "ads"; return loadPosts().then(render);
+      }).catch(function (err) { busy(btn, false, t("ad_publish")); fail(errMsg(err)); });
     });
   }
 

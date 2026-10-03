@@ -289,6 +289,29 @@ html[dir="rtl"] .seg, html[dir="rtl"] .search { direction: rtl; }
   .hero h2 { font-size: 20px; }
 }
 
+/* ---------- Ads ---------- */
+.views { max-width: 1240px; margin: 0 auto; padding: 0 16px 8px; display: flex; gap: 6px; }
+.views button { border: 0; background: transparent; padding: 6px 4px; margin-inline-end: 14px; font-weight: 700; font-size: 15px; color: var(--muted); cursor: pointer; border-bottom: 2.5px solid transparent; }
+.views button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.post.is-hidden { opacity: .7; border-style: dashed; }
+.pmedia { position: relative; background: #000; }
+.pmedia video { display: block; width: 100%; max-height: 70vh; background: #000; }
+.pmedia.photos { background: var(--sunk); cursor: zoom-in; aspect-ratio: 1 / 1; }
+.pmedia.photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pcount { position: absolute; bottom: 8px; inset-inline-end: 8px; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+.post-b { padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.post-b .desc { margin: 0; overflow-wrap: anywhere; }
+.fullimg { width: 100%; border-radius: 10px; display: block; }
+.thumbs { display: flex; gap: 6px; flex-wrap: wrap; }
+.thumbs img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; }
+@media (max-width: 640px) {
+  .feed { grid-template-columns: 1fr; gap: 14px; }
+  html.ads-view { scroll-snap-type: y proximity; }
+  .post { scroll-snap-align: start; scroll-margin-top: 8px; }
+}
+
 </style>
 </head>
 <body>
@@ -311,6 +334,7 @@ html[dir="rtl"] .seg, html[dir="rtl"] .search { direction: rtl; }
       <button class="btn primary" id="sellBtn" type="button" data-t="sell"></button>
     </div>
   </div>
+  <nav class="views" aria-label="Bazar"><button type="button" id="vOffers" aria-pressed="true" data-t="view_offers"></button><button type="button" id="vAds" aria-pressed="false" data-t="view_ads"></button></nav>
   <nav class="cats" id="cats" data-ta="categories"></nav>
 </header>
 
@@ -413,7 +437,7 @@ window.MH_STRINGS = {
     err_email_invalid: "Please enter a valid email address.", err_password_short: "The password needs at least 8 characters.", err_password_missing: "Please enter your password.",
     err_credentials: "Email or password is wrong.", err_email_unconfirmed: "Please confirm your email address first using the link in the email.",
     err_registered: "There is already an account for this email address. Please log in.", err_network: "No connection to the server. Please check your internet connection.",
-    err_unknown: "Unknown error.", err_image_size: "The photo is too large.", err_image_read: "The photo could not be read.",
+    err_unknown: "Unknown error.", err_image_size: "The file is too large.", err_image_read: "The photo could not be read.",
     chat_safety: "Only share your phone number or address when you trust the other person.", message: "Message", write_message: "Write a message …", send: "Send",
     no_messages_yet: "No messages yet. Write the first one.", view_listing: "View offer",
     winning_bid: "Winning bid", current_bid: "Current bid", status: "Status", ends_in: "Ends in",
@@ -483,10 +507,59 @@ window.MH_STRINGS = {
     privacy_hidden_1: "Your email address and password.",
     privacy_hidden_2: "The country and town in your profile.",
     privacy_hidden_3: "Your delivery address and phone number – only the seller of your order sees them.",
-    privacy_hidden_4: "Location data in photos: photos are re-saved before upload, which removes GPS information.",
+    privacy_hidden_4: "Location data in photos and videos: it is removed from the file before upload.",
     privacy_limits: "Please note: accounts, messages and orders are stored on servers of the service Supabase in Frankfurt (Germany). The operators can technically access them. Do not write anything in messages that could put you in danger.",
     privacy_inclusion: "Bazar is built so that people who cannot or do not want to appear in public can also sell safely from home.",
-    profile_privacy: "Only your shop name and account type are public. Country and town are only visible to you and are used as defaults for your offers."
+    profile_privacy: "Only your shop name and account type are public. Country and town are only visible to you and are used as defaults for your offers.",
+    view_offers: "Offers",
+    view_ads: "Ads",
+    ads_title: "Ads",
+    ads_sub: "Videos and photos from sellers",
+    ads_new: "Create ad",
+    ads_empty_title: "No ads yet",
+    ads_empty_body: "Show your products with a short video or a few photos.",
+    ad_new_title: "New ad",
+    ad_kind: "Type",
+    ad_kind_video: "Video",
+    ad_kind_photos: "Photos",
+    ad_video_hint: "MP4 or MOV, at most 30 seconds and 15 MB. Location data is removed from the file before upload.",
+    ad_photos_hint: "Up to 4 photos. They are made smaller and location data is removed.",
+    ad_caption: "Text",
+    ad_caption_hint: "What are you offering? At most 500 characters.",
+    ad_link: "Link to one of your offers (optional)",
+    ad_no_link: "No link",
+    ad_safety: "Please do not show faces, your house, your street, number plates or anything else that shows who you are or where you live.",
+    ad_publish: "Publish",
+    ad_published: "Ad published",
+    preparing: "Preparing …",
+    uploading_video: "Uploading video …",
+    uploading_photos: "Uploading photos …",
+    video_info: "{s} seconds · {mb} MB",
+    n_photos: "{n} photos",
+    err_video_type: "Please choose an MP4 or MOV video.",
+    err_video_size: "The video is larger than 15 MB.",
+    err_video_long: "The video is longer than 30 seconds.",
+    err_video_read: "The video could not be read. Please try another video.",
+    err_photos_count: "Please choose 1 to 4 photos.",
+    err_media_missing: "Please choose a video or photos.",
+    err_media_invalid: "The video or photos are not valid.",
+    ad_report: "Report",
+    report_title: "Report ad",
+    report_intro: "Why do you want to report this ad? After several reports it is hidden automatically.",
+    reason_spam: "Spam or fraud",
+    reason_unsafe: "Puts someone in danger",
+    reason_offensive: "Offensive",
+    reason_other: "Other",
+    reported: "Thank you. The ad has been reported.",
+    ad_delete: "Delete",
+    ad_deleted: "Ad deleted",
+    ad_hidden_badge: "Hidden",
+    ad_reports_n: "{n} reports",
+    ad_show: "Show again",
+    ad_hide: "Hide",
+    ad_to_listing: "View offer",
+    login_to_post: "Please log in to create an ad.",
+    login_to_report: "Please log in to report."
   },
 
   fa: {
@@ -568,7 +641,7 @@ window.MH_STRINGS = {
     err_email_invalid: "لطفاً یک ایمیل درست بنویسید.", err_password_short: "رمز باید حداقل ۸ حرف داشته باشد.", err_password_missing: "لطفاً رمز خود را بنویسید.",
     err_credentials: "ایمیل یا رمز اشتباه است.", err_email_unconfirmed: "لطفاً اول ایمیل خود را با لینک داخل ایمیل تأیید کنید.",
     err_registered: "برای این ایمیل از قبل حساب وجود دارد. لطفاً وارد شوید.", err_network: "اتصال به سرور برقرار نشد. لطفاً انترنت خود را بررسی کنید.",
-    err_unknown: "خطای نامعلوم.", err_image_size: "عکس خیلی بزرگ است.", err_image_read: "عکس خوانده نشد.",
+    err_unknown: "خطای نامعلوم.", err_image_size: "فایل خیلی بزرگ است.", err_image_read: "عکس خوانده نشد.",
     chat_safety: "شمارهٔ تلفن یا آدرس خود را فقط وقتی بدهید که به طرف مقابل اعتماد دارید.", message: "پیام", write_message: "پیام بنویسید …", send: "فرستادن",
     no_messages_yet: "هنوز پیامی نیست. اولین پیام را بنویسید.", view_listing: "دیدن پیشنهاد",
     winning_bid: "پیشنهاد برنده", current_bid: "پیشنهاد فعلی", status: "وضعیت", ends_in: "پایان در",
@@ -638,10 +711,59 @@ window.MH_STRINGS = {
     privacy_hidden_1: "ایمیل و رمز شما.",
     privacy_hidden_2: "کشور و شهر در پروفایل شما.",
     privacy_hidden_3: "آدرس تحویل و شمارهٔ تلفن شما – فقط فروشندهٔ سفارش شما آن‌ها را می‌بیند.",
-    privacy_hidden_4: "معلومات موقعیت در عکس‌ها: عکس‌ها پیش از بارگذاری دوباره ذخیره می‌شوند و معلومات GPS پاک می‌شود.",
+    privacy_hidden_4: "معلومات موقعیت در عکس‌ها و ویدیوها: پیش از بارگذاری از فایل پاک می‌شود.",
     privacy_limits: "لطفاً توجه کنید: حساب‌ها، پیام‌ها و سفارش‌ها روی سرورهای خدمات Supabase در فرانکفورت (آلمان) ذخیره می‌شوند. گردانندگان از نظر فنی به آن‌ها دسترسی دارند. در پیام‌ها چیزی ننویسید که شما را در خطر بیندازد.",
     privacy_inclusion: "«بازار» طوری ساخته شده است که کسانی که نمی‌توانند یا نمی‌خواهند در جامعه ظاهر شوند هم بتوانند با امنیت از خانه بفروشند.",
-    profile_privacy: "فقط نام فروشگاه و نوع حساب شما برای همه دیده می‌شود. کشور و شهر فقط برای خودتان دیده می‌شود و برای پیشنهادهای شما پیش‌فرض است."
+    profile_privacy: "فقط نام فروشگاه و نوع حساب شما برای همه دیده می‌شود. کشور و شهر فقط برای خودتان دیده می‌شود و برای پیشنهادهای شما پیش‌فرض است.",
+    view_offers: "پیشنهادها",
+    view_ads: "تبلیغات",
+    ads_title: "تبلیغات",
+    ads_sub: "ویدیوها و عکس‌های فروشندگان",
+    ads_new: "ساختن تبلیغ",
+    ads_empty_title: "هنوز تبلیغی نیست",
+    ads_empty_body: "محصولات خود را با یک ویدیوی کوتاه یا چند عکس نشان دهید.",
+    ad_new_title: "تبلیغ تازه",
+    ad_kind: "نوع",
+    ad_kind_video: "ویدیو",
+    ad_kind_photos: "عکس‌ها",
+    ad_video_hint: "MP4 یا MOV، حداکثر ۳۰ ثانیه و ۱۵ مگابایت. معلومات موقعیت پیش از بارگذاری از فایل پاک می‌شود.",
+    ad_photos_hint: "حداکثر ۴ عکس. عکس‌ها کوچک می‌شوند و معلومات موقعیت پاک می‌شود.",
+    ad_caption: "متن",
+    ad_caption_hint: "چه چیزی پیشنهاد می‌کنید؟ حداکثر ۵۰۰ حرف.",
+    ad_link: "پیوند به یکی از پیشنهادهای شما (اختیاری)",
+    ad_no_link: "بدون پیوند",
+    ad_safety: "لطفاً چهره، خانه، کوچه، پلاک موتر یا هر چیزی که نشان دهد شما کی هستید یا کجا زندگی می‌کنید را نشان ندهید.",
+    ad_publish: "نشر کردن",
+    ad_published: "تبلیغ نشر شد",
+    preparing: "در حال آماده‌سازی …",
+    uploading_video: "در حال بارگذاری ویدیو …",
+    uploading_photos: "در حال بارگذاری عکس‌ها …",
+    video_info: "{s} ثانیه · {mb} مگابایت",
+    n_photos: "{n} عکس",
+    err_video_type: "لطفاً یک ویدیوی MP4 یا MOV انتخاب کنید.",
+    err_video_size: "ویدیو بزرگ‌تر از ۱۵ مگابایت است.",
+    err_video_long: "ویدیو طولانی‌تر از ۳۰ ثانیه است.",
+    err_video_read: "ویدیو خوانده نشد. لطفاً ویدیوی دیگری امتحان کنید.",
+    err_photos_count: "لطفاً ۱ تا ۴ عکس انتخاب کنید.",
+    err_media_missing: "لطفاً یک ویدیو یا عکس انتخاب کنید.",
+    err_media_invalid: "ویدیو یا عکس‌ها درست نیستند.",
+    ad_report: "گزارش",
+    report_title: "گزارش تبلیغ",
+    report_intro: "چرا این تبلیغ را گزارش می‌کنید؟ پس از چند گزارش، تبلیغ به‌طور خودکار پنهان می‌شود.",
+    reason_spam: "هرزنامه یا فریب",
+    reason_unsafe: "کسی را در خطر می‌اندازد",
+    reason_offensive: "توهین‌آمیز",
+    reason_other: "سایر",
+    reported: "تشکر. تبلیغ گزارش شد.",
+    ad_delete: "حذف",
+    ad_deleted: "تبلیغ حذف شد",
+    ad_hidden_badge: "پنهان",
+    ad_reports_n: "{n} گزارش",
+    ad_show: "دوباره نشان بده",
+    ad_hide: "پنهان کن",
+    ad_to_listing: "دیدن پیشنهاد",
+    login_to_post: "لطفاً برای ساختن تبلیغ وارد شوید.",
+    login_to_report: "لطفاً برای گزارش دادن وارد شوید."
   },
 
   ps: {
@@ -723,7 +845,7 @@ window.MH_STRINGS = {
     err_email_invalid: "مهرباني وکړئ سم برېښنالیک ولیکئ.", err_password_short: "پټنوم باید لږ تر لږه ۸ توري ولري.", err_password_missing: "مهرباني وکړئ خپل پټنوم ولیکئ.",
     err_credentials: "برېښنالیک یا پټنوم غلط دی.", err_email_unconfirmed: "مهرباني وکړئ لومړی خپل برېښنالیک د برېښنالیک د لینک په واسطه تایید کړئ.",
     err_registered: "د دې برېښنالیک لپاره دمخه حساب شته. مهرباني وکړئ ننوځئ.", err_network: "له سرور سره اړیکه ونه شوه. مهرباني وکړئ خپل انټرنېټ وګورئ.",
-    err_unknown: "نامعلومه تېروتنه.", err_image_size: "انځور ډېر لوی دی.", err_image_read: "انځور ونه لوستل شو.",
+    err_unknown: "نامعلومه تېروتنه.", err_image_size: "فایل ډېر لوی دی.", err_image_read: "انځور ونه لوستل شو.",
     chat_safety: "د تلیفون شمېره یا پته یوازې هغه وخت ورکړئ چې پر بل لوري باور لرئ.", message: "پیغام", write_message: "پیغام ولیکئ …", send: "لېږل",
     no_messages_yet: "لا تر اوسه پیغام نشته. لومړی پیغام ولیکئ.", view_listing: "وړاندیز کتل",
     winning_bid: "ګټونکی وړاندیز", current_bid: "اوسنی وړاندیز", status: "حالت", ends_in: "پای ته رسېږي په",
@@ -793,11 +915,123 @@ window.MH_STRINGS = {
     privacy_hidden_1: "ستاسو برېښنالیک او پټنوم.",
     privacy_hidden_2: "ستاسو په پروفایل کې هېواد او ښار.",
     privacy_hidden_3: "ستاسو د سپارلو پته او د تلیفون شمېره – یوازې ستاسو د فرمایش پلورونکی یې ویني.",
-    privacy_hidden_4: "په انځورونو کې د ځای معلومات: انځورونه له پورته کولو مخکې بیا خوندي کېږي او د GPS معلومات لرې کېږي.",
+    privacy_hidden_4: "په انځورونو او ویډیوګانو کې د ځای معلومات: له پورته کولو مخکې له فایل څخه لرې کېږي.",
     privacy_limits: "مهرباني وکړئ پام وکړئ: حسابونه، پیغامونه او فرمایشونه د Supabase خدمت په سرورونو کې په فرانکفورت (آلمان) کې ساتل کېږي. چلوونکي له تخنیکي پلوه ورته لاسرسی لري. په پیغامونو کې داسې څه مه لیکئ چې تاسو له خطر سره مخ کړي.",
     privacy_inclusion: "«بازار» داسې جوړ شوی چې هغه کسان هم چې نشي کولی یا نه غواړي په ټولنه کې څرګند شي، له کوره په خوندي ډول وپلوري.",
-    profile_privacy: "یوازې ستاسو د هټۍ نوم او د حساب ډول ټولو ته ښکاري. هېواد او ښار یوازې تاسو ته ښکاري او ستاسو د وړاندیزونو لپاره ډیفالټ دي."
+    profile_privacy: "یوازې ستاسو د هټۍ نوم او د حساب ډول ټولو ته ښکاري. هېواد او ښار یوازې تاسو ته ښکاري او ستاسو د وړاندیزونو لپاره ډیفالټ دي.",
+    view_offers: "وړاندیزونه",
+    view_ads: "اعلانونه",
+    ads_title: "اعلانونه",
+    ads_sub: "د پلورونکو ویډیوګانې او انځورونه",
+    ads_new: "اعلان جوړول",
+    ads_empty_title: "لا تر اوسه اعلان نشته",
+    ads_empty_body: "خپل توکي په یوې لنډې ویډیو یا څو انځورونو وښایئ.",
+    ad_new_title: "نوی اعلان",
+    ad_kind: "ډول",
+    ad_kind_video: "ویډیو",
+    ad_kind_photos: "انځورونه",
+    ad_video_hint: "MP4 یا MOV، تر ټولو ډېر ۳۰ ثانیې او ۱۵ میګابایټه. د ځای معلومات له پورته کولو مخکې له فایل څخه لرې کېږي.",
+    ad_photos_hint: "تر ۴ انځورونو پورې. انځورونه کوچني کېږي او د ځای معلومات لرې کېږي.",
+    ad_caption: "متن",
+    ad_caption_hint: "څه وړاندې کوئ؟ تر ټولو ډېر ۵۰۰ توري.",
+    ad_link: "ستاسو یو وړاندیز ته لینک (اختیاري)",
+    ad_no_link: "پرته له لینکه",
+    ad_safety: "مهرباني وکړئ مخونه، کور، کوڅه، د موټر نمبر پلېټ یا بل هر هغه څه مه ښایئ چې وښيي تاسو څوک یاست یا چېرته اوسېږئ.",
+    ad_publish: "خپرول",
+    ad_published: "اعلان خپور شو",
+    preparing: "چمتو کېږي …",
+    uploading_video: "ویډیو پورته کېږي …",
+    uploading_photos: "انځورونه پورته کېږي …",
+    video_info: "{s} ثانیې · {mb} میګابایټه",
+    n_photos: "{n} انځورونه",
+    err_video_type: "مهرباني وکړئ د MP4 یا MOV ویډیو وټاکئ.",
+    err_video_size: "ویډیو له ۱۵ میګابایټو لویه ده.",
+    err_video_long: "ویډیو له ۳۰ ثانیو اوږده ده.",
+    err_video_read: "ویډیو ونه لوستل شوه. مهرباني وکړئ بله ویډیو وازمویئ.",
+    err_photos_count: "مهرباني وکړئ له ۱ تر ۴ انځورونه وټاکئ.",
+    err_media_missing: "مهرباني وکړئ ویډیو یا انځورونه وټاکئ.",
+    err_media_invalid: "ویډیو یا انځورونه سم نه دي.",
+    ad_report: "راپور",
+    report_title: "د اعلان راپور",
+    report_intro: "ولې دا اعلان راپور کوئ؟ له څو راپورونو وروسته اعلان په خپله پټېږي.",
+    reason_spam: "سپم یا دوکه",
+    reason_unsafe: "یو څوک له خطر سره مخ کوي",
+    reason_offensive: "سپکاوی",
+    reason_other: "نور",
+    reported: "مننه. اعلان راپور شو.",
+    ad_delete: "ړنګول",
+    ad_deleted: "اعلان ړنګ شو",
+    ad_hidden_badge: "پټ",
+    ad_reports_n: "{n} راپورونه",
+    ad_show: "بیا یې وښایه",
+    ad_hide: "پټ یې کړه",
+    ad_to_listing: "وړاندیز کتل",
+    login_to_post: "مهرباني وکړئ د اعلان جوړولو لپاره ننوځئ.",
+    login_to_report: "مهرباني وکړئ د راپور لپاره ننوځئ."
   }
+};
+
+</script>
+<script>
+/* Entfernt Standortangaben aus MP4/MOV-Videos, bevor sie hochgeladen werden.
+   Die Datei wird nicht neu kodiert: Standort-Boxen (©xyz, loci) werden in "free"
+   umbenannt und ihr Inhalt genullt; Koordinaten-Texte (ISO 6709, z. B. von iPhones)
+   innerhalb des moov-Bereichs werden mit Nullen überschrieben. Größe und Aufbau der
+   Datei bleiben gleich, das Video bleibt abspielbar. */
+window.MH_cleanVideo = function (buffer) {
+  var d = new Uint8Array(buffer.slice(0));
+  var dv = new DataView(d.buffer);
+  var changed = 0;
+  var CONTAINERS = { moov: 1, trak: 1, udta: 1, meta: 1, mdia: 1, minf: 1 };
+
+  function type(o) { return String.fromCharCode(d[o + 4], d[o + 5], d[o + 6], d[o + 7]); }
+  function boxSize(o, end) {
+    var s = dv.getUint32(o), h = 8;
+    if (s === 1) { s = dv.getUint32(o + 8) * 4294967296 + dv.getUint32(o + 12); h = 16; }
+    else if (s === 0) s = end - o;
+    return { size: s, hdr: h };
+  }
+  function neutralize(o, size, hdr) {
+    d[o + 4] = 102; d[o + 5] = 114; d[o + 6] = 101; d[o + 7] = 101; // "free"
+    for (var i = o + hdr; i < o + size; i++) d[i] = 0;
+    changed++;
+  }
+  function walk(off, end, depth) {
+    while (off + 8 <= end) {
+      var b = boxSize(off, end), t = type(off);
+      if (b.size < 8 || off + b.size > end) return;
+      if (t === "©xyz" || t === "loci") neutralize(off, b.size, b.hdr);
+      else if (CONTAINERS[t] && depth < 8) {
+        var inner = off + b.hdr;
+        if (t === "meta" && dv.getUint32(inner) === 0) inner += 4; // ISO "meta" ist eine FullBox
+        walk(inner, off + b.size, depth + 1);
+      }
+      off += b.size;
+    }
+  }
+
+  var off = 0, moov = null;
+  while (off + 8 <= d.length) {
+    var b = boxSize(off, d.length);
+    if (b.size < 8) break;
+    if (type(off) === "moov") moov = { o: off, s: b.size, h: b.hdr };
+    off += b.size;
+  }
+  if (!moov) return { data: d, changed: 0, ok: false };
+  walk(moov.o + moov.h, moov.o + moov.s, 0);
+
+  // Koordinaten-Texte wie "+34.5553+069.2075/" im moov-Bereich überschreiben
+  var s = "";
+  for (var i = moov.o; i < moov.o + moov.s; i++) s += String.fromCharCode(d[i]);
+  var re = /[+-]\d{2}(?:\.\d+)?[+-]\d{3}(?:\.\d+)?(?:[+-]\d+(?:\.\d+)?)?(?:CRS[^/]*)?\//g, m;
+  while ((m = re.exec(s))) {
+    for (var k = 0; k < m[0].length; k++) {
+      var c = m[0].charCodeAt(k);
+      if (c >= 48 && c <= 57) d[moov.o + m.index + k] = 48;
+    }
+    changed++;
+  }
+  return { data: d, changed: changed, ok: true };
 };
 
 </script>
@@ -875,6 +1109,7 @@ window.MH_STRINGS = {
   /* ---------- State ---------- */
   var uid = null, me = null, userEmail = "";
   var listings = [], watchSet = {}, convs = [], purchases = [], sales = [];
+  var posts = [], postsLoaded = false, postsError = "", isAdmin = false;
   var loaded = false, loadError = "";
   var ui = { q: "", cat: "", type: "all", seller: "all", origin: "all", deliverOnly: true, sort: "new", view: "browse", tab: "listings" };
 
@@ -926,6 +1161,8 @@ window.MH_STRINGS = {
     if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return t("err_network");
     if (/permission denied|JWT|not authenticated/i.test(m)) return t("err_login");
     if (/payload too large|exceeded the maximum/i.test(m)) return t("err_image_size");
+    if (/posts_duration_check/i.test(m)) return t("err_video_long");
+    if (/mime type|not supported/i.test(m)) return t("err_video_type");
     return m || t("err_unknown");
   }
   var HEART_PATH = '<path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.4 3.5 4.3 6.7-1.7 4.7-9.2 9.3-9.2 9.3z"/>';
@@ -956,23 +1193,24 @@ window.MH_STRINGS = {
       });
   }
   function loadMine() {
-    if (!uid) { me = null; watchSet = {}; convs = []; purchases = []; sales = []; return Promise.resolve(); }
+    if (!uid) { me = null; watchSet = {}; convs = []; purchases = []; sales = []; isAdmin = false; return Promise.resolve(); }
     return Promise.all([
       sb.rpc("my_profile"),
       sb.from("watch").select("listing_id"),
       sb.from("conversations").select("*, buyer:profiles!conversations_buyer_id_fkey(display_name), seller:profiles!conversations_seller_id_fkey(display_name)").order("last_at", { ascending: false }),
       sb.from("orders").select("*, order_items(*), seller:profiles!orders_seller_id_fkey(display_name)").eq("buyer_id", uid).order("created_at", { ascending: false }),
-      sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false })
+      sb.from("orders").select("*, order_items(*), buyer:profiles!orders_buyer_id_fkey(display_name)").eq("seller_id", uid).order("created_at", { ascending: false }),
+      sb.rpc("is_admin")
     ]).then(function (r) {
       for (var i = 0; i < r.length; i++) if (r[i].error) throw r[i].error;
       me = r[0].data;
       watchSet = {}; r[1].data.forEach(function (w) { watchSet[w.listing_id] = true; });
-      convs = r[2].data; purchases = r[3].data; sales = r[4].data;
+      convs = r[2].data; purchases = r[3].data; sales = r[4].data; isAdmin = r[5].data === true;
     });
   }
   function refresh() {
     return Promise.resolve()
-      .then(function () { return Promise.all([loadListings(), loadMine()]); })
+      .then(function () { return Promise.all([loadListings(), loadMine(), ui.view === "ads" ? loadPosts() : null]); })
       .catch(function (e) { loadError = errMsg(e); })
       .then(render);
   }
@@ -1085,12 +1323,15 @@ window.MH_STRINGS = {
   $("searchForm").addEventListener("submit", function (e) { e.preventDefault(); ui.view = "browse"; render(); });
   $("logo").addEventListener("click", function () {
     ui.q = ""; ui.cat = ""; ui.type = "all"; ui.seller = "all"; ui.origin = "all"; ui.deliverOnly = true; ui.sort = "new"; ui.view = "browse";
+    pauseVideos();
     $("q").value = ""; renderHeader(); render();
   });
   $("accBtn").addEventListener("click", function () { if (needLogin()) return; ui.view = "account"; render(); });
   $("cartBtn").addEventListener("click", function () { openCart(); });
   $("sellBtn").addEventListener("click", function () { if (needLogin("login_to_sell")) return; openSell(); });
   $("safetyBtn").addEventListener("click", function () { openSafety(); });
+  $("vOffers").addEventListener("click", function () { ui.view = "browse"; render(); });
+  $("vAds").addEventListener("click", function () { ui.view = "ads"; render(); if (!postsLoaded) loadPosts().then(render); });
 
   /* ---------- Browse ---------- */
   function filtered() {
@@ -1377,7 +1618,13 @@ window.MH_STRINGS = {
     $("cartCount").textContent = num(local.cart.length);
     $("accLbl").textContent = uid ? t("my_area") : t("login");
     $("accDot").hidden = !(uid && unreadCount());
-    if (ui.view === "account" && uid) renderAccount(); else { ui.view = "browse"; renderBrowse(); }
+    $("vOffers").setAttribute("aria-pressed", String(ui.view !== "ads"));
+    $("vAds").setAttribute("aria-pressed", String(ui.view === "ads"));
+    $("cats").hidden = ui.view === "ads";
+    document.documentElement.classList.toggle("ads-view", ui.view === "ads");
+    if (ui.view === "account" && uid) renderAccount();
+    else if (ui.view === "ads") renderAds();
+    else { ui.view = "browse"; renderBrowse(); }
   }
 
   /* ---------- Sheet ---------- */
@@ -1393,6 +1640,7 @@ window.MH_STRINGS = {
     $("sheetClose").focus();
   }
   function closeSheet() {
+    pauseVideos();
     $("scrim").hidden = true; $("sheet").hidden = true; sheetMode = null; sheetId = null;
     if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {}
   }
@@ -2009,6 +2257,213 @@ window.MH_STRINGS = {
     }).catch(function (e) {
       busy(btn, false, t(ed ? "save_changes" : "publish"));
       $("sErr").textContent = errMsg(e); $("sErr").hidden = false; $("sErr").scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  /* ---------- Ads (Werbung) ---------- */
+  var MAX_VIDEO_BYTES = 15 * 1024 * 1024, MAX_VIDEO_SECONDS = 30, MAX_PHOTOS = 4;
+  function loadPosts() {
+    return sb.from("posts")
+      .select("*, author:profiles!posts_author_id_fkey(display_name), listing:listings(id,title)")
+      .order("created_at", { ascending: false }).limit(100)
+      .then(function (r) { if (r.error) throw r.error; posts = r.data; postsLoaded = true; postsError = ""; })
+      .catch(function (e) { postsError = errMsg(e); postsLoaded = true; });
+  }
+  function pauseVideos() { document.querySelectorAll("video").forEach(function (v) { try { v.pause(); } catch (e) {} }); }
+  function postMedia(p) {
+    var m = p.media || [];
+    if (p.kind === "video" && m[0]) {
+      return '<div class="pmedia"><video controls playsinline preload="none"' + (m[0].poster ? ' poster="' + esc(m[0].poster) + '"' : "") + ' src="' + esc(m[0].url) + '"></video></div>';
+    }
+    if (!m.length) return "";
+    return '<div class="pmedia photos" data-photos="' + p.id + '"><img src="' + esc(m[0].url) + '" alt="" loading="lazy" decoding="async">' +
+      (m.length > 1 ? '<span class="pcount">' + t("n_photos", { n: num(m.length) }) + "</span>" : "") + "</div>";
+  }
+  function postHTML(p) {
+    var own = uid && p.author_id === uid;
+    var acts = "";
+    if (p.listing) acts += '<button class="btn sm" type="button" data-open="' + p.listing.id + '">' + t("ad_to_listing") + "</button>";
+    if (!own) acts += '<button class="btn sm ghost" type="button" data-report="' + p.id + '">' + t("ad_report") + "</button>";
+    if (isAdmin && !own) acts += '<button class="btn sm" type="button" data-hide="' + p.id + '" data-v="' + (p.hidden ? "0" : "1") + '">' + t(p.hidden ? "ad_show" : "ad_hide") + "</button>";
+    if (own || isAdmin) acts += '<button class="btn sm danger" type="button" data-pdel="' + p.id + '">' + t("ad_delete") + "</button>";
+    return '<article class="post' + (p.hidden ? " is-hidden" : "") + '">' + postMedia(p) +
+      '<div class="post-b">' +
+      '<div class="row"><b>' + esc(p.author ? p.author.display_name : "?") + '</b><span class="note">' + fmtDate(p.created_at) + "</span></div>" +
+      (p.hidden ? '<div><span class="tag sold">' + t("ad_hidden_badge") + "</span>" + (p.reports ? ' <span class="note">' + t("ad_reports_n", { n: num(p.reports) }) + "</span>" : "") + "</div>" : "") +
+      (p.caption ? '<p class="desc" dir="auto">' + esc(p.caption) + "</p>" : "") +
+      '<div class="li-acts" style="justify-content:flex-start">' + acts + "</div></div></article>";
+  }
+  function renderAds() {
+    var h = '<div class="bar"><div><h1>' + t("ads_title") + '</h1><div class="sub">' + t("ads_sub") + "</div></div>" +
+      '<div class="controls"><button class="btn primary" type="button" id="newAd">' + t("ads_new") + "</button></div></div>";
+    if (!postsLoaded) h += '<div class="empty"><b>' + t("loading") + "</b></div>";
+    else if (postsError) h += '<div class="empty"><b>' + t("load_listings_fail") + "</b>" + esc(postsError) + "</div>";
+    else if (!posts.length) h += '<div class="empty"><b>' + t("ads_empty_title") + "</b>" + t("ads_empty_body") + "</div>";
+    else h += '<div class="feed">' + posts.map(postHTML).join("") + "</div>";
+    $("main").innerHTML = h;
+    $("newAd").addEventListener("click", function () { if (needLogin("login_to_post")) return; openNewAd(); });
+    // only one video plays at a time
+    $("main").querySelectorAll("video").forEach(function (v) {
+      v.addEventListener("play", function () { $("main").querySelectorAll("video").forEach(function (o) { if (o !== v) o.pause(); }); });
+    });
+  }
+  function storagePath(url) { var i = url.indexOf("/ad-media/"); return i > -1 ? decodeURIComponent(url.slice(i + 10)) : null; }
+  $("main").addEventListener("click", function (e) {
+    var ph = e.target.closest("[data-photos]");
+    if (ph) {
+      var p = posts.filter(function (x) { return x.id === ph.getAttribute("data-photos"); })[0];
+      if (p) openSheet(t("ads_title"), p.media.map(function (m) { return '<img class="fullimg" src="' + esc(m.url) + '" alt="">'; }).join("") + (p.caption ? '<p class="desc" dir="auto">' + esc(p.caption) + "</p>" : ""), "", "photos");
+      return;
+    }
+    var rp = e.target.closest("[data-report]"); if (rp) { if (needLogin("login_to_report")) return; openReport(rp.getAttribute("data-report")); return; }
+    var hd = e.target.closest("[data-hide]");
+    if (hd) {
+      hd.disabled = true;
+      sb.rpc("admin_set_hidden", { p_post: hd.getAttribute("data-hide"), p_hidden: hd.getAttribute("data-v") === "1" })
+        .then(function (r) { if (r.error) throw r.error; return loadPosts().then(render); })
+        .catch(function (err) { hd.disabled = false; toast(errMsg(err)); });
+      return;
+    }
+    var pd = e.target.closest("[data-pdel]");
+    if (pd) {
+      if (pd.getAttribute("data-confirm") !== "1") { pd.setAttribute("data-confirm", "1"); pd.textContent = t("confirm_delete"); return; }
+      pd.disabled = true;
+      var id = pd.getAttribute("data-pdel"), post = posts.filter(function (x) { return x.id === id; })[0];
+      sb.from("posts").delete().eq("id", id).select("id").then(function (r) {
+        if (r.error) throw r.error;
+        if (!r.data.length) throw new Error(t("err_not_found"));
+        var paths = [];
+        (post && post.media || []).forEach(function (m) { [m.url, m.poster].forEach(function (u) { var sp = u && storagePath(u); if (sp) paths.push(sp); }); });
+        if (paths.length) sb.storage.from("ad-media").remove(paths).then(function () {}, function () {});
+        toast(t("ad_deleted")); return loadPosts().then(render);
+      }).catch(function (err) { pd.disabled = false; toast(errMsg(err)); });
+    }
+  });
+  function openReport(pid) {
+    var reasons = ["spam", "unsafe", "offensive", "other"];
+    openSheet(t("report_title"), '<p class="note" style="margin:0">' + t("report_intro") + "</p>" +
+      reasons.map(function (r, i) { return '<label class="check"><input type="radio" name="rReason" value="' + r + '"' + (i === 0 ? " checked" : "") + "> " + t("reason_" + r) + "</label>"; }).join("") +
+      '<div class="err" id="rErr" hidden></div>',
+      '<button class="btn" type="button" id="rCancel">' + t("cancel") + '</button><button class="btn primary" type="button" id="rSend">' + t("ad_report") + "</button>", "report", pid);
+    $("rCancel").addEventListener("click", closeSheet);
+    $("rSend").addEventListener("click", function () {
+      var reason = document.querySelector('input[name="rReason"]:checked').value;
+      busy($("rSend"), true);
+      sb.rpc("report_post", { p_post: pid, p_reason: reason }).then(function (r) {
+        if (r.error) throw r.error; closeSheet(); toast(t("reported")); return loadPosts().then(render);
+      }).catch(function (err) { busy($("rSend"), false); $("rErr").textContent = errMsg(err); $("rErr").hidden = false; });
+    });
+  }
+  function readVideoMeta(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file), v = document.createElement("video"), done = false;
+      v.preload = "metadata"; v.muted = true; v.playsInline = true;
+      function finish(res) { if (done) return; done = true; resolve(res); }
+      v.onloadedmetadata = function () {
+        var dur = v.duration;
+        // Vorschaubild aus dem Video holen
+        v.currentTime = Math.min(1, isFinite(dur) ? dur / 4 : 0.5);
+        v.onseeked = function () {
+          try {
+            var max = 640, k = Math.min(1, max / Math.max(v.videoWidth || 1, v.videoHeight || 1));
+            var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(v.videoWidth * k)); c.height = Math.max(1, Math.round(v.videoHeight * k));
+            c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+            c.toBlob(function (blob) { URL.revokeObjectURL(url); finish({ duration: dur, poster: blob, w: v.videoWidth, h: v.videoHeight }); }, "image/jpeg", 0.7);
+          } catch (e) { URL.revokeObjectURL(url); finish({ duration: dur, poster: null }); }
+        };
+        setTimeout(function () { finish({ duration: dur, poster: null }); }, 4000);
+      };
+      v.onerror = function () { URL.revokeObjectURL(url); finish(null); };
+      v.src = url;
+    });
+  }
+  function uploadAd(path, blob, type) {
+    return sb.storage.from("ad-media").upload(path, blob, { contentType: type }).then(function (r) {
+      if (r.error) throw r.error;
+      return sb.storage.from("ad-media").getPublicUrl(path).data.publicUrl;
+    });
+  }
+  function openNewAd() {
+    var mine = listings.filter(isMine);
+    var b = '<div class="box warnbox"><div class="note">' + t("ad_safety") + "</div></div>" +
+      '<form id="adForm" novalidate style="display:flex;flex-direction:column;gap:14px">' +
+      '<div class="field"><span class="flabel">' + t("ad_kind") + '</span><div class="seg" role="group" id="adKind"><button type="button" data-k="video" aria-pressed="true">' + t("ad_kind_video") + '</button><button type="button" data-k="photos" aria-pressed="false">' + t("ad_kind_photos") + "</button></div></div>" +
+      '<div class="field" id="adVideoWrap"><label for="adVideo">' + t("ad_kind_video") + '</label><input id="adVideo" type="file" accept="video/mp4,video/quicktime,.mp4,.mov"><span class="hint">' + t("ad_video_hint") + '</span><div class="note" id="adVideoInfo"></div></div>' +
+      '<div class="field" id="adPhotosWrap" hidden><label for="adPhotos">' + t("ad_kind_photos") + '</label><input id="adPhotos" type="file" accept="image/*" multiple><span class="hint">' + t("ad_photos_hint") + '</span><div class="thumbs" id="adThumbs"></div></div>' +
+      '<div class="field"><label for="adCaption">' + t("ad_caption") + '</label><textarea class="inp" id="adCaption" rows="3" maxlength="500" dir="auto"></textarea><span class="hint">' + t("ad_caption_hint") + "</span></div>" +
+      (mine.length ? '<div class="field"><label for="adLink">' + t("ad_link") + '</label><select class="inp" id="adLink"><option value="">' + t("ad_no_link") + "</option>" + mine.map(function (l) { return '<option value="' + l.id + '">' + esc(l.title) + "</option>"; }).join("") + "</select></div>" : "") +
+      '<div class="err" id="adErr" hidden></div></form>';
+    openSheet(t("ad_new_title"), b, '<button class="btn" type="button" id="adCancel">' + t("cancel") + '</button><button class="btn primary" type="button" id="adSubmit">' + t("ad_publish") + "</button>", "newad");
+    var kind = "video", video = null, photos = [];
+    $("adKind").addEventListener("click", function (e) {
+      var x = e.target.closest("[data-k]"); if (!x) return;
+      kind = x.getAttribute("data-k");
+      $("adKind").querySelectorAll("button").forEach(function (bb) { bb.setAttribute("aria-pressed", String(bb === x)); });
+      $("adVideoWrap").hidden = kind !== "video"; $("adPhotosWrap").hidden = kind !== "photos";
+    });
+    function fail(m) { $("adErr").textContent = m; $("adErr").hidden = false; }
+    $("adVideo").addEventListener("change", function () {
+      video = null; $("adErr").hidden = true; $("adVideoInfo").textContent = "";
+      var f = this.files && this.files[0]; if (!f) return;
+      var okType = /^video\/(mp4|quicktime)$/.test(f.type) || /\.(mp4|mov)$/i.test(f.name);
+      if (!okType) return fail(t("err_video_type"));
+      if (f.size > MAX_VIDEO_BYTES) return fail(t("err_video_size"));
+      $("adVideoInfo").textContent = t("preparing");
+      readVideoMeta(f).then(function (meta) {
+        if (!meta || !isFinite(meta.duration) || meta.duration <= 0) { $("adVideoInfo").textContent = ""; return fail(t("err_video_read")); }
+        if (meta.duration > MAX_VIDEO_SECONDS + 0.5) { $("adVideoInfo").textContent = ""; return fail(t("err_video_long")); }
+        video = { file: f, meta: meta };
+        $("adVideoInfo").textContent = t("video_info", { s: num(Math.round(meta.duration)), mb: num(Math.round(f.size / 104857.6) / 10) });
+      });
+    });
+    $("adPhotos").addEventListener("change", function () {
+      photos = []; $("adErr").hidden = true; $("adThumbs").innerHTML = "";
+      var files = Array.prototype.slice.call(this.files || []);
+      if (!files.length) return;
+      if (files.length > MAX_PHOTOS) return fail(t("err_photos_count"));
+      files.forEach(function (f, i) {
+        shrink(f, function (blob, url) {
+          if (!blob) { fail(t("err_image_read")); return; }
+          photos[i] = blob;
+          $("adThumbs").insertAdjacentHTML("beforeend", '<img src="' + url + '" alt="">');
+        });
+      });
+    });
+    $("adCancel").addEventListener("click", closeSheet);
+    $("adSubmit").addEventListener("click", function () {
+      $("adErr").hidden = true;
+      var caption = $("adCaption").value.trim(), link = $("adLink") ? $("adLink").value : "";
+      var btn = $("adSubmit"), base = uid + "/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      var job;
+      if (kind === "video") {
+        if (!video) return fail(t("err_media_missing"));
+        busy(btn, true, t("preparing"));
+        job = video.file.arrayBuffer().then(function (buf) {
+          var clean = window.MH_cleanVideo(buf);
+          if (!clean.ok) throw new Error(t("err_video_read"));
+          var isMov = /quicktime/.test(video.file.type) || /\.mov$/i.test(video.file.name);
+          var type = isMov ? "video/quicktime" : "video/mp4";
+          busy(btn, true, t("uploading_video"));
+          return uploadAd(base + (isMov ? ".mov" : ".mp4"), new Blob([clean.data], { type: type }), type).then(function (vurl) {
+            if (!video.meta.poster) return { url: vurl, type: type };
+            return uploadAd(base + "-poster.jpg", video.meta.poster, "image/jpeg").then(function (purl) { return { url: vurl, type: type, poster: purl }; });
+          });
+        }).then(function (item) {
+          return sb.from("posts").insert({ kind: "video", media: [item], caption: caption, listing_id: link || null, duration: Math.round(video.meta.duration * 10) / 10 }).select("id").single();
+        });
+      } else {
+        var ready = photos.filter(Boolean);
+        if (!ready.length) return fail(t("err_media_missing"));
+        if (ready.length > MAX_PHOTOS) return fail(t("err_photos_count"));
+        busy(btn, true, t("uploading_photos"));
+        job = Promise.all(ready.map(function (blob, i) { return uploadAd(base + "-" + i + ".jpg", blob, "image/jpeg"); })).then(function (urls) {
+          return sb.from("posts").insert({ kind: "photos", media: urls.map(function (u) { return { url: u, type: "image/jpeg" }; }), caption: caption, listing_id: link || null }).select("id").single();
+        });
+      }
+      job.then(function (r) {
+        if (r.error) throw r.error;
+        closeSheet(); toast(t("ad_published")); ui.view = "ads"; return loadPosts().then(render);
+      }).catch(function (err) { busy(btn, false, t("ad_publish")); fail(errMsg(err)); });
     });
   }
 

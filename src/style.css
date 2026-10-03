@@ -277,3 +277,26 @@ html[dir="rtl"] .seg, html[dir="rtl"] .search { direction: rtl; }
   .hero { padding: 16px; }
   .hero h2 { font-size: 20px; }
 }
+
+/* ---------- Ads ---------- */
+.views { max-width: 1240px; margin: 0 auto; padding: 0 16px 8px; display: flex; gap: 6px; }
+.views button { border: 0; background: transparent; padding: 6px 4px; margin-inline-end: 14px; font-weight: 700; font-size: 15px; color: var(--muted); cursor: pointer; border-bottom: 2.5px solid transparent; }
+.views button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.post.is-hidden { opacity: .7; border-style: dashed; }
+.pmedia { position: relative; background: #000; }
+.pmedia video { display: block; width: 100%; max-height: 70vh; background: #000; }
+.pmedia.photos { background: var(--sunk); cursor: zoom-in; aspect-ratio: 1 / 1; }
+.pmedia.photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pcount { position: absolute; bottom: 8px; inset-inline-end: 8px; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+.post-b { padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.post-b .desc { margin: 0; overflow-wrap: anywhere; }
+.fullimg { width: 100%; border-radius: 10px; display: block; }
+.thumbs { display: flex; gap: 6px; flex-wrap: wrap; }
+.thumbs img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; }
+@media (max-width: 640px) {
+  .feed { grid-template-columns: 1fr; gap: 14px; }
+  html.ads-view { scroll-snap-type: y proximity; }
+  .post { scroll-snap-align: start; scroll-margin-top: 8px; }
+}

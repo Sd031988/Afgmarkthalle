@@ -5,6 +5,7 @@ style = (root / "src/style.css").read_text()
 body = (root / "src/body.html").read_text()
 app = (root / "src/app.js").read_text()
 i18n = (root / "src/i18n.js").read_text()
+vclean = (root / "src/videoclean.js").read_text()
 html = f"""<!doctype html>
 <html lang="fa-AF" dir="rtl">
 <head>
@@ -24,6 +25,9 @@ html = f"""<!doctype html>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script>
 {i18n}
+</script>
+<script>
+{vclean}
 </script>
 <script>
 {app}
